@@ -87,7 +87,14 @@ def main(argv: Optional[List[str]] = None) -> int:
     census_p.add_argument("--family", help="Filter by family prefix (e.g. KXFEDFUNDS, KXUSCPI, KXRAIN)")
     census_p.add_argument("--min-hours", type=float, default=24.0, help="Minimum hours to window close (default 24h)")
 
+    # kalshi daemon (Continuous Autonomous Cadence)
+    daemon_p = subparsers.add_parser("daemon", help="Run continuous autonomous execution daemon across 7 strategy lanes")
+    daemon_p.add_argument("--interval", type=int, default=300, help="Cycle interval in seconds (default 300s)")
+    daemon_p.add_argument("--cycles", type=int, help="Optional max cycle count")
+
     args = parser.parse_args(argv)
+
+
 
     store = FactStore()
     gate = ExecutionGate(store)
@@ -318,7 +325,14 @@ def main(argv: Optional[List[str]] = None) -> int:
         print("══════════════════════════════════════════════════════════════")
         return 0
 
+    elif args.command == "daemon":
+        from domains.kalshi.harness.cadence_daemon import KalshiCadenceDaemon
+        daemon = KalshiCadenceDaemon(interval_seconds=args.interval, max_cycles=args.cycles)
+        daemon.start()
+        return 0
+
     return 0
+
 
 
 

@@ -126,7 +126,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     mistakes_sub.add_parser("list", help="List all 10 compiled mistake invariants")
     mistakes_sub.add_parser("seed", help="Seed mistake invariants into SQLite database")
 
+    # senate daemon (Continuous Autonomous Cadence)
+    daemon_p = subparsers.add_parser("daemon", help="Run continuous autonomous cadence loop (Idle is a bug)")
+    daemon_p.add_argument("--interval", type=int, default=300, help="Cycle interval in seconds (default 300s)")
+    daemon_p.add_argument("--cycles", type=int, help="Optional max cycle count")
+
     args = parser.parse_args(argv)
+
 
     store = FactStore()
 
@@ -465,7 +471,14 @@ def main(argv: Optional[List[str]] = None) -> int:
             print("══════════════════════════════════════════════════════════════")
             return 0
 
+    elif args.command == "daemon":
+        from senate.harness.daemon import SenateCadenceDaemon
+        daemon = SenateCadenceDaemon(interval_seconds=args.interval, max_cycles=args.cycles)
+        daemon.start()
+        return 0
+
     return 0
+
 
 
 

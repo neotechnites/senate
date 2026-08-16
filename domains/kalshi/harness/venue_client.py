@@ -88,6 +88,12 @@ class KalshiVenueClient:
                 except Exception:
                     self._private_key = None
 
+    @property
+    def has_credentials(self) -> bool:
+        """Check if authenticated credentials (API key + private key) are loaded."""
+        return bool(self.api_key_id and self._private_key)
+
+
     def _sign_headers(self, method: str, bare_path: str) -> Dict[str, str]:
         """Sign request. Invariant: bare_path MUST exclude query parameters."""
         if not (self.api_key_id and self._private_key):
