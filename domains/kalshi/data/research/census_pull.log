@@ -1,0 +1,28 @@
+enumerating...
+  [settled] page 1: +1000 total=1000
+  [settled] page 2: +1000 total=2000
+  [settled] page 3: +1000 total=3000
+  [settled] page 4: +1000 total=4000
+  [settled] page 5: +1000 total=5000
+  [settled] page 6: +1000 total=6000
+  [settled] page 7: +1000 total=7000
+  [settled] page 8: +1000 total=8000
+  [settled] page 9: +1000 total=9000
+  [settled] page 10: +195 total=9195
+finalized population: 9195
+sample n=500 across 39 days
+  0/500 KXTEMPCHIH-26JUL1500-T86.99 trades=4
+  25/500 KXTEMPCHIH-26JUL2700-T79.99 trades=1
+  50/500 KXTEMPCHIH-26AUG1204-T68.99 trades=0
+  75/500 KXTEMPCHIH-26AUG0713-T75.99 trades=1
+  100/500 KXTEMPCHIH-26JUL0920-T88.99 trades=0
+  125/500 KXTEMPCHIH-26AUG0808-T70.99 trades=3
+  150/500 KXTEMPCHIH-26AUG0717-T86.99 trades=12
+  175/500 KXTEMPCHIH-26JUL1101-T72.99 trades=4
+  200/500 KXTEMPCHIH-26JUL1722-T82.99 trades=1
+  225/500 KXTEMPCHIH-26AUG1405-T70.99 trades=12
+  250/500 KXTEMPCHIH-26AUG1113-T80.99 trades=0
+  275/500 KXTEMPCHIH-26JUL1001-T73.99 trades=2
+  300/500 KXTEMPCHIH-26JUL1219-T83.99 trades=91
+  325/500 KXTEMPCHIH-26JUL3117-T74.99 trades=9
+  350/500 KXTEMPCHIH-26JUL3115-T79.99 trades=17

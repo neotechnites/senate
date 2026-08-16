@@ -1,0 +1,13 @@
+{
+  "endpoint": "https://api.elections.kalshi.com/trade-api/v2/markets/KXMVESPORTSMULTIGAMEEXTENDED-S20261F26AB0A316-64331C2C246/orderbook",
+  "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S20261F26AB0A316-64331C2C246",
+  "http_status": 200,
+  "fetched_at": "2026-08-14T20:45:08.623402+00:00",
+  "server_date": "Fri, 14 Aug 2026 20:45:08 GMT",
+  "data": {
+    "orderbook_fp": {
+      "no_dollars": [],
+      "yes_dollars": []
+    }
+  }
+}

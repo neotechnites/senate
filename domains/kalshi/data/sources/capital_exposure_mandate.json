@@ -1,0 +1,7 @@
+{
+  "source": "sovereign_mandate:ryan_risk_limits",
+  "verified_at": "2026-08-15T12:00:00Z",
+  "max_per_market_usd": 50.00,
+  "max_total_portfolio_usd": 250.00,
+  "description": "Hard capital limits: maximum $50 collateral per single market, $250 across total portfolio (positions + resting)."
+}

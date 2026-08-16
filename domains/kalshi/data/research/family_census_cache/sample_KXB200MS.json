@@ -1,0 +1,28 @@
+{
+ "seed": 20260815,
+ "series": "KXB200MS",
+ "population_all": 141,
+ "population_resolved": 18,
+ "population_open": 0,
+ "sample": [
+  "KXB200MS-26JUN-7.000",
+  "KXB200MS-26JUL-4.500",
+  "KXB200MS-26JUN-5.000",
+  "KXB200MS-26JUN-4.500",
+  "KXB200MS-26JUN-3.00",
+  "KXB200MS-26JUL-6.000",
+  "KXB200MS-26JUL-5.500",
+  "KXB200MS-26JUN-6.500",
+  "KXB200MS-26JUL-7.000",
+  "KXB200MS-26JUN-6.000",
+  "KXB200MS-26JUN-4.000",
+  "KXB200MS-26JUN-3.50",
+  "KXB200MS-26JUL-6.500",
+  "KXB200MS-26JUL-3.50",
+  "KXB200MS-26JUL-5.000",
+  "KXB200MS-26JUN-5.500",
+  "KXB200MS-26JUL-3.00",
+  "KXB200MS-26JUL-4.000"
+ ],
+ "open": []
+}

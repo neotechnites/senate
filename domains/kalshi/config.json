@@ -1,0 +1,12 @@
+{
+  "domain_id": "kalshi",
+  "name": "Kalshi Prediction Markets",
+  "description": "Autonomous market maker and liquidity incentive program engine.",
+  "category": "capital_generation",
+  "created_at": "2026-08-14T20:09:00Z",
+  "active_lanes": [
+    "autoseat_lip",
+    "election_scanner",
+    "rain_momentum"
+  ]
+}

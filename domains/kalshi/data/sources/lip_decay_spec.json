@@ -1,0 +1,9 @@
+{
+  "source": "https://api.elections.kalshi.com/trade-api/v2/incentive_programs",
+  "verified_at": "2026-08-15T21:30:00Z",
+  "decay_rate_per_tick": 0.5,
+  "discount_factor_bps": 5000,
+  "formula": "reward * (0.50 ** distance_ticks)",
+  "payload_cache": "data/research/temp_census_cache/incentive_programs_all.json",
+  "provenance_note": "2026-08-15: prior source URL (trading-api.../lip_programs) 404s on a retired host \u2014 citation was fabricated though the 5000 bps value is correct. Re-verified against the live incentive_programs payload (discount_factor_bps=5000 on all rows); cache retained."
+}

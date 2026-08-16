@@ -1,0 +1,67 @@
+# analyzed: 374 markets (sample 500, population 9195, 39 days)
+markets with ZERO prints all hour: 113/374 = 0.3021
+total prints 5359; median prints/market 3; p90 40; max 425
+settlement base rate P(YES) = 0.6257
+
+## ARM 1 - always-resting deep bid, BOTH sides, every market-window
+
+-- resting 1c on BOTH sides --
+P(this market ever fills us at 1c) = 0.5321 [0.4814,0.5821] (199/374)
+  YES 1c bid filled: 79 mkts | P(settle YES | filled) = 0.0000 [0.0000,0.0464] (0/79)
+  NO  1c bid filled: 121 mkts | P(settle NO  | filled) = 0.0083 [0.0015,0.0453] (1/121)
+  P(win | filled) = 0.0050 [0.0009,0.0278]  (breakeven = 0.01; lottery premise assumes >= 0.01)
+  EV per FILLED contract = $-0.0050  [CI $-0.0091, $+0.0178]
+  EV per MARKET-WINDOW (1 ct/side attempted, maker fee $0) = $-0.00267
+  contracts printed at that tick per filled mkt: median 23, p90 1421, max 8100, TOTAL 82795 across 374 mkts
+
+-- resting 2c on BOTH sides --
+P(this market ever fills us at 2c) = 0.3583 [0.3114,0.4081] (134/374)
+  YES 2c bid filled: 47 mkts | P(settle YES | filled) = 0.0000 [0.0000,0.0756] (0/47)
+  NO  2c bid filled: 88 mkts | P(settle NO  | filled) = 0.0114 [0.0020,0.0616] (1/88)
+  P(win | filled) = 0.0074 [0.0013,0.0408]  (breakeven = 0.02; lottery premise assumes >= 0.02)
+  EV per FILLED contract = $-0.0126  [CI $-0.0187, $+0.0208]
+  EV per MARKET-WINDOW (1 ct/side attempted, maker fee $0) = $-0.00455
+  contracts printed at that tick per filled mkt: median 2, p90 96, max 2000, TOTAL 6885 across 374 mkts
+
+-- resting 3c on BOTH sides --
+P(this market ever fills us at 3c) = 0.4037 [0.3552,0.4542] (151/374)
+  YES 3c bid filled: 56 mkts | P(settle YES | filled) = 0.0000 [0.0000,0.0642] (0/56)
+  NO  3c bid filled: 96 mkts | P(settle NO  | filled) = 0.0208 [0.0057,0.0728] (2/96)
+  P(win | filled) = 0.0132 [0.0036,0.0467]  (breakeven = 0.03; lottery premise assumes >= 0.03)
+  EV per FILLED contract = $-0.0168  [CI $-0.0264, $+0.0167]
+  EV per MARKET-WINDOW (1 ct/side attempted, maker fee $0) = $-0.00684
+  contracts printed at that tick per filled mkt: median 1, p90 32, max 1195, TOTAL 4143 across 374 mkts
+
+## ARM 1b - WHEN does the 1c fill land? (noise would be uniform; informed is late)
+n=199 first-1c-fills; elapsed fraction of the hour at fill: median 0.661, p25 0.238, p75 0.867, mean 0.564
+  share of 1c fills in the LAST third of the window: 0.4925  (uniform noise would be 0.333)
+
+## ARM 2 - in-band (15-85c) maker seat
+
+### PRIMARY - preregistered n=100 subsample  (n=100)
+P(price transits 15-85c band) = 0.3300 [0.2456,0.4269] (33/100)
+in-band seats (first print in band): 19; mean entry $0.3332
+P(filled | seated, PERFECT queue) = 0.7368 [0.5121,0.8819] (14/19)
+FILLED n=14: mean settlement-minus-entry = $-0.2493 95%CI [$-0.3768, $-0.1217]
+  P(filled side settles ITM) = 0.0714 [0.0127,0.3147] (1/14)
+  post-fill mark drift (last print - entry, our side) = $-0.2521
+  [KXTEMPCHIH] LIP ceiling $0.1200/posted-contract/window (=120 USD / 1000 target, decay 0.5^0 at touch) vs adverse $0.1837 -> NET $-0.0637/contract
+      net at 95%CI bounds of adverse: [$-0.1577, $+0.0303]
+      at $50 cap = 150 contracts: $-9.56/seated window
+  [KXTEMPMIAH] LIP ceiling $0.0800/posted-contract/window (=80 USD / 1000 target, decay 0.5^0 at touch) vs adverse $0.1837 -> NET $-0.1037/contract
+      net at 95%CI bounds of adverse: [$-0.1977, $-0.0097]
+      at $50 cap = 150 contracts: $-15.56/seated window
+
+### SECONDARY - extended seed-ordered prefix (order fixed pre-data)  (n=374)
+P(price transits 15-85c band) = 0.2941 [0.2502,0.3422] (110/374)
+in-band seats (first print in band): 81; mean entry $0.2994
+P(filled | seated, PERFECT queue) = 0.8519 [0.7587,0.9132] (69/81)
+FILLED n=69: mean settlement-minus-entry = $-0.2278 95%CI [$-0.2823, $-0.1734]
+  P(filled side settles ITM) = 0.0580 [0.0228,0.1398] (4/69)
+  post-fill mark drift (last print - entry, our side) = $-0.2186
+  [KXTEMPCHIH] LIP ceiling $0.1200/posted-contract/window (=120 USD / 1000 target, decay 0.5^0 at touch) vs adverse $0.1941 -> NET $-0.0741/contract
+      net at 95%CI bounds of adverse: [$-0.1204, $-0.0277]
+      at $50 cap = 167 contracts: $-12.37/seated window
+  [KXTEMPMIAH] LIP ceiling $0.0800/posted-contract/window (=80 USD / 1000 target, decay 0.5^0 at touch) vs adverse $0.1941 -> NET $-0.1141/contract
+      net at 95%CI bounds of adverse: [$-0.1604, $-0.0677]
+      at $50 cap = 167 contracts: $-19.05/seated window

@@ -1,0 +1,7 @@
+{
+  "source": "https://trading-api.kalshi.com/trade-api/v2/portfolio/settlements",
+  "verified_at": "2026-08-14T17:00:00Z",
+  "payout_per_winning_contract_usd": 1.0000,
+  "payout_per_losing_contract_usd": 0.0000,
+  "settlement_currency": "USD"
+}

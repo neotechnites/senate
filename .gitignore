@@ -1,0 +1,30 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# OS / Editor files
+.DS_Store
+.vscode/
+.idea/
+
+# Environment and Secrets (CRITICAL: NEVER COMMIT KEYS)
+.env
+*.pem
+*.key
+nestor/secrets/
+secrets/
+
+# Database WAL / SHM temporary lockfiles (preserve main .db files if desired)
+*.db-wal
+*.db-shm
+*.db-journal
+
+# Rust build artifacts
+target/
+crates/*/target/
+
+# Virtual environments
+.venv/
+venv/

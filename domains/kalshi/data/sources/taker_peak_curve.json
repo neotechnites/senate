@@ -1,0 +1,7 @@
+{
+  "source": "https://kalshi.com/regulatory/exchange-specs",
+  "verified_at": "2026-08-14T17:00:00Z",
+  "peak_taker_fee_price_cents": 50,
+  "symmetry_axis_cents": 50,
+  "description": "Taker fees peak quadratically at exactly 50 cents price."
+}

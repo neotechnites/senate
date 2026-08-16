@@ -1,0 +1,7 @@
+{
+  "source": "https://trading-api.kalshi.com/trade-api/v2/portfolio/rewards/history",
+  "verified_at": "2026-08-14T17:00:00Z",
+  "realized_vs_estimate_max_error_bps": 10,
+  "realization_tolerance_pct": 0.001,
+  "description": "Realized daily LIP reward credits match deterministic model estimates within 0.1%."
+}

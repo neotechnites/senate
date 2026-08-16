@@ -1,0 +1,9 @@
+{
+  "source": "https://kalshi.com/regulatory/fee-schedule",
+  "verified_at": "2026-08-14T17:00:00Z",
+  "maker_fee_usd": 0.0,
+  "taker_formula": "ceil_to_hundredth_cent(0.07 * count * price * (1 - price))",
+  "maker_fee_waiver": true,
+  "rounding": "billed fee rounds UP to 1/100 cent (venue fill receipt 2026-08-15: 277ct @ .14 -> $2.3346)",
+  "provenance_note": "2026-08-16: whole-cent ceil regression corrected AGAIN (first fixed Jul 2026, regressed); ground truth = fee_cost on 1,540 real fills"
+}

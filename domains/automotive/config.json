@@ -1,0 +1,10 @@
+{
+  "domain_id": "automotive",
+  "name": "Automotive Chassis Engineering",
+  "description": "CAD stress-strain and aerodynamic simulation engine",
+  "category": "physical",
+  "created_at": "2026-08-14T19:56:45Z",
+  "active_lanes": [
+    "core"
+  ]
+}
