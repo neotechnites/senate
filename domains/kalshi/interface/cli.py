@@ -114,8 +114,17 @@ def main(argv: Optional[List[str]] = None) -> int:
             "name": "Kalshi Prediction Markets",
             "category": "capital_generation",
             "mission": "Autonomous prediction market trading and market making engine.",
-            "active_lanes": ["autoseat_lip", "election_scanner", "rain_momentum"],
+            "active_lanes": [
+                "autoseat_lip",
+                "crypto_scalp",
+                "mlb_xvenue",
+                "weather_ensemble",
+                "dutchbook_arb",
+                "deribit_implied",
+                "earnings_nlp",
+            ],
             "resource_consumption": {
+
                 "resting_collateral_usd": round(sum(o.collateral_usd for o in orders), 2),
             },
             "domain_metrics": {

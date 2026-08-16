@@ -72,10 +72,19 @@ INITIAL_PROJECTS: List[ProjectState] = [
             "category": "capital_generation",
             "mission": "Autonomous prediction market trading and market making engine.",
             "path": "domains/kalshi",
-            "lanes": ["autoseat_lip", "election_scanner", "rain_momentum"],
+            "lanes": [
+                "autoseat_lip",
+                "crypto_scalp",
+                "mlb_xvenue",
+                "weather_ensemble",
+                "dutchbook_arb",
+                "deribit_implied",
+                "earnings_nlp",
+            ],
         },
     )
 ]
+
 
 
 def seed_database(store: FactStore) -> None:
