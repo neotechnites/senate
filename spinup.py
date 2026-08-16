@@ -119,10 +119,13 @@ def main():
 
     print(f"Launching Executive Senate Head ({claude_path})...\n")
 
+    initial_prompt = "Initialize Senate: Run `./senate.py status` to confirm sovereign state across active domains and report current portfolio status."
     cmd = [
         claude_path,
         "--system-prompt", system_prompt,
+        initial_prompt,
     ]
+
 
     try:
         os.execvp(claude_path, cmd)

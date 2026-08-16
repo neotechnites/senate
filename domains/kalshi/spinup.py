@@ -83,12 +83,14 @@ First, run `./kalshi.py status` to verify current live ground truth with Ryan.""
         return
 
     print(f"Launching Dedicated Kalshi Domain Head ({claude_path})...\n")
-    cmd = [claude_path, "--system-prompt", system_prompt]
+    initial_prompt = "Initialize domain: Execute `./kalshi.py status` to confirm live ground truth, run `./kalshi.py census` to evaluate active market families, and present your verified operational status."
+    cmd = [claude_path, "--system-prompt", system_prompt, initial_prompt]
     try:
         os.execvp(claude_path, cmd)
     except FileNotFoundError:
         print(f"❌ Error: Claude binary not found at '{claude_path}'.", file=sys.stderr)
         sys.exit(1)
+
 
 
 if __name__ == "__main__":
