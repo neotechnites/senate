@@ -83,18 +83,11 @@ First, run `./kalshi.py status` to verify current live ground truth with Ryan.""
         return
 
     print(f"Launching Dedicated Kalshi Domain Head ({claude_path})...\n")
-    initial_prompt = (
-        "MANDATE EXECUTION:\n"
-        "1. Check live venue status: `./kalshi.py status`.\n"
-        "2. Scan active opportunities across the 7 strategy lanes (crypto_scalp, mlb_xvenue, weather_ensemble, dutchbook_arb, deribit_implied, earnings_nlp, autoseat_lip).\n"
-        "3. Evaluate live market tape and run hypothesis kill-tests via `senate ideate`.\n"
-        "Report verified actionable opportunities and recommended deployments."
-    )
-
-    cmd = [claude_path, "--system-prompt", system_prompt, initial_prompt]
+    cmd = [claude_path, "--system-prompt", system_prompt]
 
     try:
         os.execvp(claude_path, cmd)
+
     except FileNotFoundError:
         print(f"❌ Error: Claude binary not found at '{claude_path}'.", file=sys.stderr)
         sys.exit(1)

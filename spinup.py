@@ -119,18 +119,11 @@ def main():
 
     print(f"Launching Executive Senate Head ({claude_path})...\n")
 
-    initial_prompt = (
-        "EXECUTIVE SENATE INITIALIZATION:\n"
-        "1. Sync domain pods: `./senate.py domain sync kalshi`.\n"
-        "2. Review the 7 active strategy lanes in the Kalshi domain pod (crypto_scalp, mlb_xvenue, weather_ensemble, dutchbook_arb, deribit_implied, earnings_nlp, autoseat_lip).\n"
-        "3. Check ideation registry and graveyard (`./senate.py ideate list`).\n"
-        "Present the current portfolio health, active strategy status, and top concrete proposals ready for decision."
-    )
     cmd = [
         claude_path,
         "--system-prompt", system_prompt,
-        initial_prompt,
     ]
+
 
 
 
