@@ -88,14 +88,17 @@ KEY HARD INVARIANTS & CONSTITUTIONAL RULES:
         print(system_prompt)
         return
 
-    print(f"Launching Dedicated Kalshi Domain Head ({claude_path})...\n")
     initial_prompt = (
-        "ORGANIZATIONAL HEAD RESUMPTION:\n"
-        "1. Query SQLite (`kalshi_domain.db`) and check recent `lane_runs`, active orders, and depth watches to resume where the organization left off.\n"
-        "2. Ensure background operations/subagents are running for continuous scanning and ideation.\n"
-        "3. Provide a concise 2-sentence executive check-in, then remain dormant and standing by for Ryan or subagent escalation."
+        "ORGANIZATIONAL HEAD RESUMPTION & SUBAGENT FLEET LAUNCH:\n"
+        "1. Query SQLite (`kalshi_domain.db`) to pick up where the organization left off.\n"
+        "2. Launch 3 active background subagents to work concurrently on our standing lanes:\n"
+        "   - Subagent 1 (Ideation & Kill-Testing): Continuously propose fresh prediction market hypotheses and run multi-model falsification via `senate ideate`.\n"
+        "   - Subagent 2 (Seats / LIP Optimization): Replay the 24h curfew and depth >= 250 safety floors on active books to optimize maker yield.\n"
+        "   - Subagent 3 (MLB / Cross-Venue): Prepare real-time depth instrumentation for Sunday's 17:00Z slate.\n"
+        "3. Confirm the 3 subagents are running in background, then remain dormant and standing by for Ryan or subagent escalation."
     )
     cmd = [claude_path, "--system-prompt", system_prompt, initial_prompt]
+
 
     try:
         os.execvp(claude_path, cmd)
