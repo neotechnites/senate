@@ -83,13 +83,20 @@ First, run `./kalshi.py status` to verify current live ground truth with Ryan.""
         return
 
     print(f"Launching Dedicated Kalshi Domain Head ({claude_path})...\n")
-    initial_prompt = "Initialize domain: Execute `./kalshi.py status` to confirm live ground truth, run `./kalshi.py census` to evaluate active market families, and present your verified operational status."
+    initial_prompt = (
+        "STANDING MANDATE EXECUTION:\n"
+        "1. SEATS: Run `./kalshi.py status` and `./kalshi.py census` to evaluate live venue ground truth and 7-day family opportunities under depth >= 250 and 24h curfew.\n"
+        "2. IDEATION: Run `senate ideate propose` on live tape hypotheses through the Gemini adversary; persist all kills and survivors to SQLite.\n"
+        "3. FRAMEWORK: Verify that all 10 historical mistake invariants remain compiled as impossible.\n"
+        "Present your verified findings and seat placement recommendations immediately."
+    )
     cmd = [claude_path, "--system-prompt", system_prompt, initial_prompt]
     try:
         os.execvp(claude_path, cmd)
     except FileNotFoundError:
         print(f"❌ Error: Claude binary not found at '{claude_path}'.", file=sys.stderr)
         sys.exit(1)
+
 
 
 
