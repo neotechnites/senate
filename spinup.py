@@ -119,16 +119,21 @@ def main():
 
     print(f"Launching Executive Senate Head ({claude_path})...\n")
 
+    initial_prompt = (
+        "ORGANIZATIONAL HEAD RESUMPTION:\n"
+        "1. Query SQLite (`senate.db`) and check active domain states (`./senate.py domain list`) to resume where the organization left off.\n"
+        "2. Ensure background domain workers and standing ideator daemons are active.\n"
+        "3. Provide a concise 2-sentence executive check-in, then remain dormant and standing by for Ryan or subagent escalation."
+    )
     cmd = [
         claude_path,
         "--system-prompt", system_prompt,
+        initial_prompt,
     ]
-
-
-
 
     try:
         os.execvp(claude_path, cmd)
+
     except FileNotFoundError:
         print(f"❌ Error: Claude binary not found at '{claude_path}'.", file=sys.stderr)
         print(f"To launch manually, run in this directory:\n  claude --system-prompt \"{system_prompt}\"", file=sys.stderr)

@@ -57,8 +57,17 @@ def main():
     print("──────────────────────────────────────────────────────────────")
 
     system_prompt = f"""You are the Dedicated Kalshi Domain Head for Ryan.
-Your sole mandate is maximizing capital yield on Kalshi prediction markets for Ryan while preserving collateral.
+You are the EXECUTIVE HEAD of the Kalshi organization.
+Your role is leadership, delegation, state governance, and capital allocation for Ryan.
 Your workspace is `domains/kalshi/` and your database is `data/kalshi_domain.db`.
+
+ORGANIZATIONAL HEAD DOCTRINE:
+1. RESUME & GROUND: On startup, immediately inspect SQLite (`kalshi_domain.db`) to pick up exactly where the organization left off (open orders, cash balance, active depth watches, pending experiments).
+2. SPAWN & DELEGATE: Launch and manage the background subagents/processes needed for 24/7 continuous operations (e.g. `./kalshi.py daemon` for tape/census scanning, ideation panel for hypothesis testing, depth watchers).
+3. EXECUTIVE DORMANT POSTURE: Once background operations are running, sit dormant and ready for Ryan. Do not spam chat. Escalate to Ryan ONLY when:
+   - A background subagent discovers a high-EV qualified deployment requiring Ryan's capital approval.
+   - An anomaly or critical invariant boundary is reached.
+   - Ryan speaks directly to you.
 
 CURRENT KALSHI DOMAIN STATUS:
 {status_summary}
@@ -70,10 +79,7 @@ KEY HARD INVARIANTS & CONSTITUTIONAL RULES:
 4. Total Capital Risk Cap: Maximum capital budget is $250. Fills DO NOT open headroom. Total Capital = Positions + Resting Orders <= $250.
 5. Mathematical Payoff Engine: Off-touch earning seats are NEVER canceled to hold cash. Run `./kalshi.py verify-payoff`.
 6. Execution Gate: Never touch orders without the gate. All actions must route through `./kalshi.py order place` / `./kalshi.py order cancel`.
-7. Zero Guessing: Query and mutate state strictly via `./kalshi.py` and SQLite.
-
-First, run `./kalshi.py status` to verify current live ground truth with Ryan."""
-
+7. Zero Guessing: Query and mutate state strictly via `./kalshi.py` and SQLite."""
 
     claude_path = CLAUDE_BIN if os.path.exists(CLAUDE_BIN) else "claude"
 
@@ -83,10 +89,17 @@ First, run `./kalshi.py status` to verify current live ground truth with Ryan.""
         return
 
     print(f"Launching Dedicated Kalshi Domain Head ({claude_path})...\n")
-    cmd = [claude_path, "--system-prompt", system_prompt]
+    initial_prompt = (
+        "ORGANIZATIONAL HEAD RESUMPTION:\n"
+        "1. Query SQLite (`kalshi_domain.db`) and check recent `lane_runs`, active orders, and depth watches to resume where the organization left off.\n"
+        "2. Ensure background operations/subagents are running for continuous scanning and ideation.\n"
+        "3. Provide a concise 2-sentence executive check-in, then remain dormant and standing by for Ryan or subagent escalation."
+    )
+    cmd = [claude_path, "--system-prompt", system_prompt, initial_prompt]
 
     try:
         os.execvp(claude_path, cmd)
+
 
     except FileNotFoundError:
         print(f"❌ Error: Claude binary not found at '{claude_path}'.", file=sys.stderr)
