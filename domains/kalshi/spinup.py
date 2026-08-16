@@ -84,15 +84,15 @@ First, run `./kalshi.py status` to verify current live ground truth with Ryan.""
 
     print(f"Launching Dedicated Kalshi Domain Head ({claude_path})...\n")
     initial_prompt = (
-        "STANDING SENATE DOMAIN MANDATE EXECUTION:\n"
-        "1. PORTFOLIO STATUS: Run `./kalshi.py status` to confirm live ground truth across all 7 strategy lanes (autoseat_lip, crypto_scalp, mlb_xvenue, weather_ensemble, dutchbook_arb, deribit_implied, earnings_nlp).\n"
-        "2. MULTI-LANE SCANNER: Run `./kalshi.py census` across all 7-day market families to evaluate active opportunities under depth >= 250 and 24h curfew gates.\n"
-        "3. CONTINUOUS IDEATION: Run `senate ideate propose` on live tape hypotheses through the Gemini adversary; persist all kills and survivors to SQLite.\n"
-        "4. INVARIANT VERIFICATION: Verify that all 10 historical mistake invariants remain compiled as impossible.\n"
-        "Present your verified findings across the full strategy portfolio immediately."
+        "MANDATE EXECUTION:\n"
+        "1. Check live venue status: `./kalshi.py status`.\n"
+        "2. Scan active opportunities across the 7 strategy lanes (crypto_scalp, mlb_xvenue, weather_ensemble, dutchbook_arb, deribit_implied, earnings_nlp, autoseat_lip).\n"
+        "3. Evaluate live market tape and run hypothesis kill-tests via `senate ideate`.\n"
+        "Report verified actionable opportunities and recommended deployments."
     )
 
     cmd = [claude_path, "--system-prompt", system_prompt, initial_prompt]
+
     try:
         os.execvp(claude_path, cmd)
     except FileNotFoundError:
