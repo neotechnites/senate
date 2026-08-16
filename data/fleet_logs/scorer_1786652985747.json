@@ -1,0 +1,19 @@
+{
+  "task_id": "scorer_1786652985747",
+  "role": "scorer",
+  "task": "PREREG BACKLOG GRADING+DISPOSITIONS (per HANDOFF E6). (1) Write a dispositions entry (ledger entry or new work/prereg-dispositions-2026-08-13.md \u2014 do NOT edit sealed reg files, sha tamper) closing dead-window regs: polyus-step-b (PolyUS money ban), gemini-postable (no KYC account), polyus-lpga (pre-empted, MUST NOT FIRE per hunt-ledger:205-208). (2) Flag the 3 trials in protocol/trials.jsonl with NO registration file (one placed $25 real \u2014 the SF seat, credit VOID) \u2014 document that they inflate global N=10 and Bonferroni bars while ungradeable; propose (don't apply) a correction convention. (3) Prep the slip-live BOS grade for 08-14 10:30 MT: grade EXACTLY as sealed (kill <$2.22), record beside it the fill confound (100% fill 08-12 12:36 MT \u2192 1.7h/42.7h presence, no void clause). (4) Document for Sunday: sleepy2 sealed $7.786 (kill <$3.89, confirm $5.45-10.12) GOVERNS; packet-v2 $5.97 [$3.58-6.08] reported beside as MODEL; note SATURDAY-DECISION-PACKET.md:24 cites wrong sha (e00506e5 is slip-live's; sleepy2's is ab6a8e6a). (5) registrations/2026-08-12-scalp-size-probe.md sits UNSEALED in sealed dir \u2014 flag disposition. Receipts only, no adjectives.",
+  "status": "RUNNING",
+  "started_epoch": 1786652985.747064,
+  "log_path": "/Users/ryanwhitehead/Documents/senate/data/fleet_logs/scorer_1786652985747.json",
+  "duration_s": 0.0,
+  "output": {
+    "role": "scorer",
+    "action": "adversarial_audit",
+    "verdict": "KILL_3_SEATS",
+    "survivors": [
+      "VT-PR3",
+      "NM-BQ3"
+    ],
+    "reason": "OK and CO colonized 4x-7x; NM-BQ2 decayed sub-15c."
+  }
+}

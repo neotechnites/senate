@@ -1,0 +1,10 @@
+{
+  "role": "engineer",
+  "task": "Run unit tests",
+  "status": "FAILED_EXIT_5",
+  "duration_s": 0.033,
+  "test_output_tail": "----------------------------------------------------------------------\nRan 0 tests in 0.000s\n\nNO TESTS RAN",
+  "task_id": "engineer_1786664813806",
+  "started_epoch": 1786664813.83956,
+  "log_path": "/Users/ryanwhitehead/Documents/senate/data/fleet_logs/engineer_1786664813806.json"
+}

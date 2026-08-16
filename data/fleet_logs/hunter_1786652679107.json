@@ -1,0 +1,18 @@
+{
+  "task_id": "hunter_1786652679107",
+  "role": "hunter",
+  "task": "Scan fresh listings",
+  "status": "COMPLETED",
+  "started_epoch": 1786652679.1079738,
+  "log_path": "/Users/ryanwhitehead/Documents/senate/data/fleet_logs/hunter_1786652679107.json",
+  "duration_s": 0.0,
+  "output": {
+    "role": "hunter",
+    "action": "market_scan",
+    "findings": "Listing scan complete. Discovered uncolonized pools staged on disk.",
+    "candidates": [
+      "KXSTATEBALLOTMEASURE-VT-PR3",
+      "KXSTATEBALLOTMEASURE-NM-BQ3"
+    ]
+  }
+}

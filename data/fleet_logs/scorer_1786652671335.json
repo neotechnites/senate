@@ -1,0 +1,19 @@
+{
+  "task_id": "scorer_1786652671335",
+  "role": "scorer",
+  "task": "Audit ballot seats",
+  "status": "COMPLETED",
+  "started_epoch": 1786652671.335819,
+  "log_path": "/Users/ryanwhitehead/Documents/senate/data/fleet_logs/scorer_1786652671335.json",
+  "duration_s": 0.0,
+  "output": {
+    "role": "scorer",
+    "action": "adversarial_audit",
+    "verdict": "KILL_3_SEATS",
+    "survivors": [
+      "VT-PR3",
+      "NM-BQ3"
+    ],
+    "reason": "OK and CO colonized 4x-7x; NM-BQ2 decayed sub-15c."
+  }
+}

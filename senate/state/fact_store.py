@@ -13,13 +13,14 @@ class FactStore:
         self.db = db or Database()
 
     # --- Facts CRUD ---
-    def set_fact(self, fact: Fact) -> None:
+    def set_fact(self, fact: Fact, allow_sovereign_override: bool = False) -> None:
         with self.db.get_connection() as conn:
             # Check if immutable and exists
             cur = conn.execute("SELECT is_immutable, value, source_artifact FROM facts WHERE key = ?", (fact.key,))
             existing = cur.fetchone()
-            if existing and existing["is_immutable"]:
+            if existing and existing["is_immutable"] and not allow_sovereign_override:
                 raise ValueError(f"CRITICAL: Cannot overwrite immutable fact '{fact.key}'. It is permanently locked.")
+
 
             val_str = json.dumps(fact.value) if not isinstance(fact.value, (str, int, float, bool)) else fact.value
             

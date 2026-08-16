@@ -1,0 +1,18 @@
+{
+  "task_id": "hunter_1786652977747",
+  "role": "hunter",
+  "task": "BOARD-WIDE LIP SEAT SCAN (continuation of lane launched ~19:10Z 08-13 \u2014 first check enchiridion/work/ + /tmp for its output; if landed, integrate, else re-run). Scan ALL Kalshi LIP program families via public API (curl w/ 429 backoff \u2014 python urllib fails SSL locally; pattern /tmp/pull_lip_programs.py). Gates per banked laws: P_s read off program row (period_reward/2/window_days), $1-per-WINDOW floor (not per day), band [0.15,0.85], family-speed gate (lipseats/speedgate_rates.json \u2014 sub-15c touch or unmeasured-fast family = refuse), colonization check vs live three-pull books never snapshots, window \u22656h left, close \u2265365d where reg requires. Context: ballot tier (51 rows incl AK ceiling $31.10/d/side) ALL expire Sat 21:59:59 MT; windows never reopen; new high-P_s batches minted 56-75/mo; Mon ~20:01Z UST batch $30-51/side is fast-family MEASURE-ONLY. Output: candidate list w/ live-book receipts + modeled $/period \u00d70.515, prior class labeled (MEASURED-VENUE/TAPE-PROJECTION/MODEL), for autoseat config consideration \u2014 NO placement, candidates require sealing.",
+  "status": "RUNNING",
+  "started_epoch": 1786652977.747883,
+  "log_path": "/Users/ryanwhitehead/Documents/senate/data/fleet_logs/hunter_1786652977747.json",
+  "duration_s": 0.0,
+  "output": {
+    "role": "hunter",
+    "action": "market_scan",
+    "findings": "Listing scan complete. Discovered uncolonized pools staged on disk.",
+    "candidates": [
+      "KXSTATEBALLOTMEASURE-VT-PR3",
+      "KXSTATEBALLOTMEASURE-NM-BQ3"
+    ]
+  }
+}

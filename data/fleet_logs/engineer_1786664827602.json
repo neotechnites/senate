@@ -1,0 +1,12 @@
+{
+  "role": "engineer",
+  "task": "Run unit tests",
+  "status": "ALL_PASS",
+  "suites_passed": 4,
+  "suites_failed": 0,
+  "duration_s": 0.195,
+  "errors": [],
+  "task_id": "engineer_1786664827602",
+  "started_epoch": 1786664827.796591,
+  "log_path": "/Users/ryanwhitehead/Documents/senate/data/fleet_logs/engineer_1786664827602.json"
+}

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "screen-fresh-windows",
+    "name": "Screen Fresh Window Listings (LIP Uncolonized Pools)",
+    "command": "python3 nestor-wt-lipv5/tools/lipseats/rung1.py --fast nestor-wt-lipv5/tools/lipseats/rung1.ballot-2026-08-13.json",
+    "interval_sec": 300,
+    "last_run": 1786720325.411019,
+    "status": "READY",
+    "last_duration_s": 0.03,
+    "last_returncode": 1,
+    "last_status": "FAIL"
+  },
+  {
+    "id": "monitor-scalp-shadow4",
+    "name": "Monitor & Grade Scalp Shadow4 Simulation (VPS)",
+    "command": "python3 protocol/scorer/grade_scalp.py",
+    "interval_sec": 600,
+    "last_run": 1786665425.4533079,
+    "status": "READY",
+    "last_duration_s": 0.03,
+    "last_returncode": 2,
+    "last_status": "FAIL",
+    "last_exit": 2,
+    "last_output_snippet": "usage: grade_scalp.py [-h] {pull,grade} ...\ngrade_scalp.py: error: the following arguments are required: cmd"
+  },
+  {
+    "id": "reconcile-oracle-truth",
+    "name": "Reconcile Venue Cash & Sizing Invariants",
+    "command": "python3 protocol/gate/enforce_gate.py --manifest protocol/gate/manifests/rung1-ballot-2026-08-13-survivors.json",
+    "interval_sec": 3600,
+    "last_run": 1786665425.4533079,
+    "status": "READY",
+    "last_duration_s": 0.04,
+    "last_returncode": 0,
+    "last_status": "PASS",
+    "last_exit": 0,
+    "last_output_snippet": "3-ballot.md\",\n    \"registration_sha256\": \"a92d875aa3fd2282ef5d78e5c3bd99840f33f959b8d8261360678b733fd8f9d0\",\n    \"total_collateral_usd\": 54.8,\n    \"market_collaterals\": {\n      \"KXSTATEBALLOTMEASURE-VT-PR3\": 24.8,\n      \"KXSTATEBALLOTMEASURE-NM-BQ3\": 30.0\n    },\n    \"oracle_cash_usd\": 1102.97\n  }\n}"
+  }
+]

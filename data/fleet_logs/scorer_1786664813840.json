@@ -1,0 +1,15 @@
+{
+  "role": "scorer",
+  "task": "Audit ballot seats",
+  "status": "COMPLETED",
+  "duration_s": 0.046,
+  "kills": 0,
+  "survivors": 0,
+  "detail": {
+    "killed_items": [],
+    "survivors": []
+  },
+  "task_id": "scorer_1786664813840",
+  "started_epoch": 1786664813.886555,
+  "log_path": "/Users/ryanwhitehead/Documents/senate/data/fleet_logs/scorer_1786664813840.json"
+}

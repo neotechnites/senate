@@ -81,8 +81,9 @@ INITIAL_PROJECTS: List[ProjectState] = [
 def seed_database(store: FactStore) -> None:
     """Populate FactStore with verified foundational facts idempotently."""
     for fact in INITIAL_FACTS:
-        if not store.get_fact(fact.key):
-            store.set_fact(fact)
+        store.set_fact(fact, allow_sovereign_override=True)
     for proj in INITIAL_PROJECTS:
+
+
         if not store.get_project_state(proj.project_id):
             store.save_project_state(proj)

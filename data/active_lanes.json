@@ -1,0 +1,50 @@
+[
+  {
+    "id": "autoseat",
+    "name": "Autoseat Bot (LIP $100 Bankroll)",
+    "type": "EXECUTION",
+    "status": "LIVE_ACTIVE",
+    "owner": "VPS Service",
+    "unblock_action": "None (Autonomous)"
+  },
+  {
+    "id": "scalp-shadow4",
+    "name": "Scalp Shadow4 Simulation (18:30-22:30 MT)",
+    "type": "QUANT_SIMULATION",
+    "status": "ARMED",
+    "owner": "VPS Timer",
+    "unblock_action": "Verdict pull ~22:40 MT"
+  },
+  {
+    "id": "mlbrace-mlb",
+    "name": "MLB Selective Join Tape Rig (14:00-03:00 MT)",
+    "type": "DATA_CAPTURE",
+    "status": "LIVE_RECORDING",
+    "owner": "VPS Service",
+    "unblock_action": "Post-game gate evaluation"
+  },
+  {
+    "id": "bounties",
+    "name": "Market Bug Bounties (4 Kalshi + 5 Polymarket Drafts)",
+    "type": "ONE_TIME_INCOME",
+    "status": "DRAFTS_READY",
+    "owner": "Ryan Sovereign Call",
+    "unblock_action": "Submit web forms (forms.kalshi.com)"
+  },
+  {
+    "id": "gpu-vantage",
+    "name": "GPU A4 / ORNN Latency Series",
+    "type": "RESEARCH_SERIES",
+    "status": "MONITORING",
+    "owner": "VPS Cron (Hourly :57)",
+    "unblock_action": "Harvest event accrual"
+  },
+  {
+    "id": "discovery-hunters",
+    "name": "Active Discovery & Anomaly Sweep",
+    "type": "CONTINUOUS_SEARCH",
+    "status": "RUNNING",
+    "owner": "Fleet Subagents",
+    "unblock_action": "None (Continuous screening)"
+  }
+]
