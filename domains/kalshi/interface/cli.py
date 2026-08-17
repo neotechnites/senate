@@ -82,6 +82,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     payoff_p.add_argument("--cand-ticker", help="Alternative candidate ticker")
     payoff_p.add_argument("--cand-dist", type=int, default=0, help="Candidate distance in ticks")
     payoff_p.add_argument("--cand-reward", type=float, default=0.0, help="Candidate base reward")
+    payoff_p.add_argument("--hurdle", type=float, default=1.5, help="Recycle hurdle multiplier (default 1.5)")
     # kalshi census (Multi-family opportunity scan)
     census_p = subparsers.add_parser("census", help="Scan active market families across 7 days with curfew and base-rate filters")
     census_p.add_argument("--family", help="Filter by family prefix (e.g. KXFEDFUNDS, KXUSCPI, KXRAIN)")

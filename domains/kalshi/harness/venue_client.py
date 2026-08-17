@@ -165,6 +165,18 @@ class KalshiVenueClient:
         client_order_id: str,
     ) -> Dict[str, Any]:
         """Submit post-only maker limit order to Kalshi."""
+        cnt = float(count)
+        acquire_c = int(price_cents)
+        cost_usd = round((acquire_c / 100.0) * cnt, 2)
+
+        if cost_usd > 50.01:
+            raise ValueError(f"SENATE INVARIANT BREACH: Order cost ${cost_usd:.2f} exceeds $50.00 single-market cap.")
+        if acquire_c >= 90:
+            raise ValueError(f"SENATE INVARIANT BREACH: Acquire price {acquire_c}c >= 90c strictly prohibited (asymmetric negative-EV trap).")
+        tk_upper = str(ticker).upper()
+        if side.lower() == "no" and acquire_c <= 35 and ("BALLOT" in tk_upper or "BOND" in tk_upper or "FUND" in tk_upper):
+            raise ValueError(f"SENATE INVARIANT BREACH: Selling cheap NO at {acquire_c}c on high-probability measure '{ticker}' prohibited.")
+
         bare_path = f"{TRADE_API_PREFIX}/portfolio/orders"
         url = f"{self.base_url}{bare_path}"
         headers = self._sign_headers("POST", bare_path)
@@ -183,6 +195,7 @@ class KalshiVenueClient:
         req = urllib.request.Request(url, data=data_bytes, headers=headers, method="POST")
         with urllib.request.urlopen(req, context=self._ssl_ctx, timeout=10) as resp:
             return json.loads(resp.read().decode("utf-8"))
+
 
     def cancel_order(self, order_id: str) -> Dict[str, Any]:
         """Cancel an existing order on Kalshi."""

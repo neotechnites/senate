@@ -1,0 +1,226 @@
+{
+ "KXTEMPAUSH-26AUG1522-T89.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPAUSH-26AUG1522-T90.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPAUSH-26AUG1522-T92.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPAUSH-26AUG1522-T93.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPAUSH-26AUG1523-T86.99": {
+  "status": "determined",
+  "result": "yes"
+ },
+ "KXTEMPAUSH-26AUG1523-T89.99": {
+  "status": "determined",
+  "result": "no"
+ },
+ "KXTEMPAUSH-26AUG1523-T90.99": {
+  "status": "determined",
+  "result": "no"
+ },
+ "KXTEMPCHIH-26AUG1522-T77.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPDCH-26AUG1522-T77.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPDCH-26AUG1522-T78.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPDCH-26AUG1523-T77.99": {
+  "status": "determined",
+  "result": "yes"
+ },
+ "KXTEMPDCH-26AUG1523-T78.99": {
+  "status": "determined",
+  "result": "yes"
+ },
+ "KXTEMPLAXH-26AUG1522-T70.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPLAXH-26AUG1522-T71.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPLAXH-26AUG1523-T68.99": {
+  "status": "determined",
+  "result": "yes"
+ },
+ "KXTEMPLAXH-26AUG1523-T70.99": {
+  "status": "determined",
+  "result": "no"
+ },
+ "KXTEMPMIAH-26AUG1522-T81.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPMIAH-26AUG1522-T82.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPMIAH-26AUG1522-T83.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPMIAH-26AUG1522-T84.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPMIAH-26AUG1522-T85.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPMIAH-26AUG1522-T86.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPMIAH-26AUG1522-T87.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPMIAH-26AUG1523-T78.99": {
+  "status": "determined",
+  "result": "yes"
+ },
+ "KXTEMPMIAH-26AUG1523-T81.99": {
+  "status": "determined",
+  "result": "yes"
+ },
+ "KXTEMPMIAH-26AUG1523-T82.99": {
+  "status": "determined",
+  "result": "yes"
+ },
+ "KXTEMPMIAH-26AUG1523-T85.99": {
+  "status": "determined",
+  "result": "no"
+ },
+ "KXTEMPMIAH-26AUG1523-T86.99": {
+  "status": "determined",
+  "result": "no"
+ },
+ "KXTEMPMIAH-26AUG1523-T87.99": {
+  "status": "determined",
+  "result": "no"
+ },
+ "KXTEMPNYCH-26AUG1522-T72.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPNYCH-26AUG1522-T74.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPNYCH-26AUG1522-T75.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPNYCH-26AUG1522-T76.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPNYCH-26AUG1523-T74.99": {
+  "status": "determined",
+  "result": "no"
+ },
+ "KXTEMPAUSH-26AUG1522-T91.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPAUSH-26AUG1523-T82.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPAUSH-26AUG1523-T83.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPAUSH-26AUG1523-T84.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPAUSH-26AUG1523-T85.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPCHIH-26AUG1522-T73.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPCHIH-26AUG1522-T76.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPDCH-26AUG1522-T79.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPDCH-26AUG1522-T80.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPLAXH-26AUG1522-T73.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPLAXH-26AUG1523-T64.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPLAXH-26AUG1523-T65.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPLAXH-26AUG1523-T66.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPMIAH-26AUG1522-T78.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPMIAH-26AUG1522-T80.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPMIAH-26AUG1523-T79.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPMIAH-26AUG1523-T80.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPNYCH-26AUG1522-T71.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPNYCH-26AUG1522-T73.99": {
+  "status": "finalized",
+  "result": "yes"
+ },
+ "KXTEMPNYCH-26AUG1523-T75.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPNYCH-26AUG1523-T76.99": {
+  "status": "finalized",
+  "result": "no"
+ },
+ "KXTEMPNYCH-26AUG1523-T77.99": {
+  "status": "finalized",
+  "result": "no"
+ }
+}

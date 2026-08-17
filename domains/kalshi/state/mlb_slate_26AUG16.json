@@ -1,0 +1,186 @@
+{
+  "fetched_at": "2026-08-16T03:51:41.275952+00:00",
+  "date_token": "26AUG16",
+  "markets": [
+    {
+      "ticker": "KXMLBGAME-26AUG161215BALTB-BAL",
+      "title": "Baltimore vs Tampa Bay Winner?",
+      "open_time": "2026-08-13T16:25:00Z",
+      "expected_expiration_time": "2026-08-16T19:15:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161215BALTB-TB",
+      "title": "Baltimore vs Tampa Bay Winner?",
+      "open_time": "2026-08-13T16:25:00Z",
+      "expected_expiration_time": "2026-08-16T19:15:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161335AZATL-ATL",
+      "title": "Arizona vs Atlanta Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:35:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161335AZATL-AZ",
+      "title": "Arizona vs Atlanta Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:35:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161335BOSPIT-BOS",
+      "title": "Boston vs Pittsburgh Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:35:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161335BOSPIT-PIT",
+      "title": "Boston vs Pittsburgh Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:35:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161337NYYTOR-NYY",
+      "title": "New York Y vs Toronto Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:37:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161337NYYTOR-TOR",
+      "title": "New York Y vs Toronto Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:37:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161340CWSDET-CWS",
+      "title": "Chicago WS vs Detroit Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:40:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161340CWSDET-DET",
+      "title": "Chicago WS vs Detroit Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:40:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161340MIACIN-CIN",
+      "title": "Miami vs Cincinnati Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:40:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161340MIACIN-MIA",
+      "title": "Miami vs Cincinnati Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:40:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161340SDCLE-CLE",
+      "title": "San Diego vs Cleveland Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:40:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161340SDCLE-SD",
+      "title": "San Diego vs Cleveland Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:40:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161340WSHNYM-NYM",
+      "title": "Washington vs New York M Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:40:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161340WSHNYM-WSH",
+      "title": "Washington vs New York M Winner?",
+      "open_time": "2026-08-13T17:55:00Z",
+      "expected_expiration_time": "2026-08-16T20:40:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161410PHIMIN-MIN",
+      "title": "Philadelphia vs Minnesota Winner?",
+      "open_time": "2026-08-13T18:25:00Z",
+      "expected_expiration_time": "2026-08-16T21:10:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161410PHIMIN-PHI",
+      "title": "Philadelphia vs Minnesota Winner?",
+      "open_time": "2026-08-13T18:25:00Z",
+      "expected_expiration_time": "2026-08-16T21:10:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161515STLCHC-CHC",
+      "title": "St. Louis vs Chicago C Winner?",
+      "open_time": "2026-08-13T19:25:00Z",
+      "expected_expiration_time": "2026-08-16T22:15:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161515STLCHC-STL",
+      "title": "St. Louis vs Chicago C Winner?",
+      "open_time": "2026-08-13T19:25:00Z",
+      "expected_expiration_time": "2026-08-16T22:15:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161605COLSF-COL",
+      "title": "Colorado vs San Francisco Winner?",
+      "open_time": "2026-08-13T20:25:00Z",
+      "expected_expiration_time": "2026-08-16T23:05:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161605COLSF-SF",
+      "title": "Colorado vs San Francisco Winner?",
+      "open_time": "2026-08-13T20:25:00Z",
+      "expected_expiration_time": "2026-08-16T23:05:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161605TEXATH-ATH",
+      "title": "Texas vs A's Winner?",
+      "open_time": "2026-08-13T20:25:00Z",
+      "expected_expiration_time": "2026-08-16T23:05:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161605TEXATH-TEX",
+      "title": "Texas vs A's Winner?",
+      "open_time": "2026-08-13T20:25:00Z",
+      "expected_expiration_time": "2026-08-16T23:05:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161607KCLAA-KC",
+      "title": "Kansas City vs Los Angeles A Winner?",
+      "open_time": "2026-08-13T20:25:00Z",
+      "expected_expiration_time": "2026-08-16T23:07:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161607KCLAA-LAA",
+      "title": "Kansas City vs Los Angeles A Winner?",
+      "open_time": "2026-08-13T20:25:00Z",
+      "expected_expiration_time": "2026-08-16T23:07:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161610MILLAD-LAD",
+      "title": "Milwaukee vs Los Angeles D Winner?",
+      "open_time": "2026-08-13T20:25:00Z",
+      "expected_expiration_time": "2026-08-16T23:10:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161610MILLAD-MIL",
+      "title": "Milwaukee vs Los Angeles D Winner?",
+      "open_time": "2026-08-13T20:25:00Z",
+      "expected_expiration_time": "2026-08-16T23:10:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161920SEAHOU-HOU",
+      "title": "Seattle vs Houston Winner?",
+      "open_time": "2026-08-13T23:40:00Z",
+      "expected_expiration_time": "2026-08-17T02:20:00Z"
+    },
+    {
+      "ticker": "KXMLBGAME-26AUG161920SEAHOU-SEA",
+      "title": "Seattle vs Houston Winner?",
+      "open_time": "2026-08-13T23:40:00Z",
+      "expected_expiration_time": "2026-08-17T02:20:00Z"
+    }
+  ]
+}
