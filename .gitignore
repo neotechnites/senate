@@ -28,3 +28,9 @@ crates/*/target/
 # Virtual environments
 .venv/
 venv/
+
+# Regenerable API-response caches (Kalshi research). ~1.4 GB as of 2026-09-09.
+# These are re-fetchable and must never enter git history.
+domains/kalshi/data/research/*_cache/
+domains/kalshi/data/research/*_cache_*/
+domains/kalshi/data/research/autoseat_cache/
