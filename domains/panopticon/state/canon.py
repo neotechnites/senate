@@ -183,6 +183,83 @@ FACTS = [
      "nothign is installed on my pc right now ... i will develop on it, but i also need the "
      "ability toy work with the domain head on it remotely from my mac. the pc will always be on.",
      "ryan", 1),
+
+    # ------------------------------------------------------------------ added 2026-09-10
+    # These three were written into the live DB during working sessions and existed only
+    # there, so a rebuilt pod came up without them.  A fresh head then booted missing the
+    # hard design constraint the ghost mechanic exists to serve, the implementation
+    # standard, and the three verification methods already proven to pass broken code.
+    ('panopticon.no_idle_time', {
+        'rule': 'NO IDLE TIME FOR ANY PLAYER INVOLVED. Not the shooter, not living '
+                'prisoners, not ghosts.',
+        'strength': 'HARD CONSTRAINT, and now a design DRIVER: the rest of the game is '
+                    'balanced around the ghost mechanic, not the other way round.',
+        'ryan_on_the_tradeoff': 'He acknowledges some games take sit-outs and that in '
+                                'short rounds it is not a big deal. He is choosing not '
+                                'to, on the grounds that a game without sit-outs leads '
+                                'to more interesting and fun gameplay.'}, 'Ryan design conversation 2026-09-09',
+     'the ghost mechanic needs further thinking through. but we need to balance the rest around '
+     'it, i dont want idel time for any player involved. and yes, some games have sit outs, and '
+     'especially for small rounds thats not a big deal, but if we can created a game without '
+     'sitouts, that leads to more intersting and fun gameplay were going to do that',
+     'ryan', 1),
+
+    ('panopticon.engineering.craft', {
+        'RULE': 'Do it right, do it properly, write good code. Look at how other games '
+                'solve the problem. Keep the project clean.',
+        'applies_to': 'IMPLEMENTATION craft. This does not conflict with '
+                      'panopticon.method.first_principles, which governs whether a '
+                      "DESIGN is good. Ryan's split: other games are never evidence "
+                      'that a design is good, but they ARE the right source for how to '
+                      'solve a problem you already have.',
+        'standards': [       'Statically typed GDScript, no warnings.',
+                             'No magic numbers. Tunables live in exported Resources so '
+                             'variants can be swept headlessly.',
+                             'Real .tscn scenes authored as scenes. Never build nodes '
+                             'in code to dodge the editor.',
+                             'Comments explain WHY, not what.',
+                             'Clean node hierarchies, shared materials, clear naming. '
+                             "A scene's structure is a communication to Ryan, who "
+                             'opens it next.',
+                             'Established algorithms implemented faithfully, not '
+                             'approximated. Example: air-strafing is Quake/Source '
+                             'PM_AirAccelerate, a specific documented formulation, not '
+                             'a feel to guess at.',
+                             'No dead code, no corner-cutting to finish faster.'],
+        'enforcement': 'The head specs and verifies; subagents implement. A subagent '
+                       'reporting success is not evidence — the head runs it headless '
+                       'before anything is committed.'}, 'Ryan direction 2026-09-09',
+     'do this right, do it properly, write good code. go look at other games, and how they do it, '
+     'and keep this project clean',
+     'ryan', 1),
+
+    ('panopticon.engineering.verification_traps', {
+        'why': 'Three separate verification methods have now been found to silently '
+               'pass code that should fail. Each was believed to be working. Record '
+               'them so they are not rediscovered.',
+        'broken_1': 'ResourceLoader.load() returns a valid object for a script that '
+                    'would fail with warnings-as-errors. Only GDScript.reload() '
+                    'surfaces it. A check using load() alone tests nothing.',
+        'broken_2': 'Copying the project without running `godot --headless --import` '
+                    'in the copy leaves the global class_name cache unbuilt, so every '
+                    'custom type reports as unknown and the audit floods with FALSE '
+                    'failures. The head hit this and briefly reported 11 fake '
+                    'failures.',
+        'broken_3': 'Promoting warning levels via ProjectSettings.set_setting() at '
+                    'RUNTIME is silently ignored - GDScript reads warning levels once '
+                    "at engine init. The promotion must be written into the copy's "
+                    'project.godot BEFORE the engine starts.',
+        'correct_method': "Copy project to temp dir. Edit the COPY's project.godot to "
+                          'set the three warning levels to =2. Run `godot --headless '
+                          '--import` in the copy. Then load() AND reload() each .gd, '
+                          'asserting OK. Validate the harness with a canary (a '
+                          'deliberate untyped declaration) that MUST fail.',
+        'standing_rule': 'A verification method is not trusted until it has been shown '
+                         'to FAIL on a deliberately broken input. Every check the head '
+                         'accepts must demonstrate its own teeth.'}, 'head + subagent findings 2026-09-09',
+     'do this right, do it properly, write good code',
+     'head', 1),
+
 ]
 
 
@@ -274,17 +351,22 @@ SCOPE_SEED = [
 
 
 def seed(conn) -> dict:
-    """Idempotent. Returns what was written."""
+    """Idempotent, and NON-DESTRUCTIVE. Returns what was written.
+
+    Facts INSERT-OR-IGNORE rather than upsert.  Until 2026-09-10 this upserted, which
+    meant `./panopticon.py seed` silently reverted every correction Ryan had made since
+    the seed was written: `panopticon.music` would have gone back to "Ryan creates it, or
+    commissions on Fiverr" and thrown away decision 21's SCORE-not-radio ruling, and
+    `panopticon.testing.bots` would have lost the "these are not LLM agents" correction.
+    The seed's job is to reconstitute a MISSING fact, never to overrule a live one.  To
+    change a fact deliberately, edit the row.
+    """
     for key, value, source, authorized, verified_by, immutable in FACTS:
         conn.execute(
             """INSERT INTO facts (key, value, source, authorized, ratified_on, verified_by,
                                   is_immutable, updated_at)
                VALUES (?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
-               ON CONFLICT(key) DO UPDATE SET
-                   value=excluded.value, source=excluded.source,
-                   authorized=excluded.authorized, ratified_on=excluded.ratified_on,
-                   verified_by=excluded.verified_by, is_immutable=excluded.is_immutable,
-                   updated_at=CURRENT_TIMESTAMP""",
+               ON CONFLICT(key) DO NOTHING""",
             (key, json.dumps(value), source, authorized,
              RATIFIED_ON if verified_by == "ryan" else "", verified_by, immutable))
 
@@ -455,11 +537,18 @@ DECISIONS_SEED = [
 ]
 
 
+# Standing orders: rendered in EVERY boot prompt, never rotated out by a newer ruling.
+# See interface/head_prompt.standing_orders_block for why the recency window was not enough.
+PINNED_TOPICS = {"the pod tracks tasks, not just gates"}
+
+
 def seed_decisions(conn) -> int:
     for (on, topic, ruling, rationale, evidence) in DECISIONS_SEED:
         exists = conn.execute("SELECT 1 FROM decisions WHERE topic=?", (topic,)).fetchone()
         if not exists:
-            conn.execute("INSERT INTO decisions (decided_on, topic, ruling, rationale, evidence) "
-                         "VALUES (?,?,?,?,?)", (on, topic, ruling, rationale, evidence))
+            conn.execute("INSERT INTO decisions (decided_on, topic, ruling, rationale, "
+                         "evidence, pinned) VALUES (?,?,?,?,?,?)",
+                         (on, topic, ruling, rationale, evidence,
+                          int(topic in PINNED_TOPICS)))
     conn.commit()
     return len(DECISIONS_SEED)

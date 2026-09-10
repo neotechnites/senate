@@ -240,12 +240,18 @@ class TestWorkQueue(unittest.TestCase):
         self.assertTrue(queue.head_is_idle(self.conn),
                         "an idle head with open work must be detectable, not silent")
 
-    def test_pc_session_respects_the_hour_budget(self):
+    def test_the_pc_plan_does_not_budget_by_estimated_hours(self):
+        """Ryan, 2026-09-09: 'i have never ever ever seen you estimate hours correctly.
+        rip it out of your brain.'  block() stopped printing hours that day; the planner
+        kept computing with them until 2026-09-10."""
+        import inspect
         from domains.panopticon.verify import queue
         self.conn.execute("UPDATE tasks SET status='READY', blocked_by='' WHERE lane='PC_REQUIRED'")
         self.conn.commit()
-        plan = queue.pc_session_plan(self.conn, hours=1.0)
-        self.assertLessEqual(sum(t["estimate_hours"] for t in plan), 1.0)
+        plan = queue.pc_session_plan(self.conn)
+        self.assertTrue(plan)
+        self.assertNotIn("hours", inspect.signature(queue.pc_session_plan).parameters)
+        self.assertNotIn("estimate_hours", inspect.getsource(queue.pc_session_plan))
 
     def test_ryans_corrections_are_recorded_as_decisions(self):
         topics = [r["topic"] for r in self.conn.execute("SELECT topic FROM decisions")]
@@ -260,7 +266,8 @@ class TestWorkQueue(unittest.TestCase):
     def test_queue_reaches_the_head_prompt(self):
         p = hp.build_head_prompt(self.conn)
         self.assertIn("WORK QUEUE", p)
-        self.assertIn("NEVER IDLE", p)
+        self.assertIn("THE QUEUE IS THE WORK", p)
+        self.assertIn("PLANNING FAILURE", p)
 
 
 class TestTruthOwnership(unittest.TestCase):
@@ -269,7 +276,111 @@ class TestTruthOwnership(unittest.TestCase):
         self.assertIn("THIS DB IS TRUTH", b)
         self.assertNotIn("MIRROR", b)
 
-    def test_after_bootstrap_a_non_pc_host_is_a_mirror(self):
+    def test_after_bootstrap_the_mac_stays_authoritative(self):
+        """Decision 26, Ryan verbatim: 'no we dont need to make that change, ill work with
+        you here for now.'  The old rule declared this host a MIRROR once the PC was up,
+        so the head's second line told it not to trust the only DB it can write."""
         self.conn.execute("UPDATE milestones SET status='DONE' WHERE name='pc_bootstrapped'")
         self.conn.commit()
-        self.assertIn("MIRROR", hp.host_block(self.conn))
+        b = hp.host_block(self.conn)
+        self.assertIn("AUTHORITATIVE", b)
+        self.assertNotIn("MIRROR", b)
+
+
+class TestStandingOrders(unittest.TestCase):
+    """Ryan repeated orders he had already given because the boot prompt rendered the 8
+    newest rulings out of 46 and everything older aged off the edge.  These pin the fix."""
+
+    SEED_DAY = date(2026, 9, 9)
+
+    def _decide(self, topic, ruling, pinned=0, superseded=None):
+        self.conn.execute(
+            "INSERT INTO decisions (decided_on, topic, ruling, rationale, evidence, "
+            "pinned, superseded_by) VALUES (?,?,?,?,?,?,?)",
+            (self.SEED_DAY.isoformat(), topic, ruling, "test", "ryan ruling",
+             pinned, superseded))
+        self.conn.commit()
+
+    def test_a_pinned_ruling_renders_however_old_it_is(self):
+        self._decide("ancient standing order", "NEVER do the forbidden thing.", pinned=1)
+        for i in range(20):
+            self._decide(f"newer ruling {i}", f"something else {i}")
+        p = hp.build_head_prompt(self.conn)
+        self.assertIn("STANDING ORDERS", p)
+        self.assertIn("NEVER do the forbidden thing.", p,
+                      "a pinned order aged out of the prompt — the original defect")
+
+    def test_a_superseded_ruling_never_reaches_the_head(self):
+        self._decide("withdrawn", "The head makes small changes itself.", superseded=999)
+        p = hp.build_head_prompt(self.conn)
+        self.assertNotIn("The head makes small changes itself.", p)
+
+    def test_a_pinned_ruling_is_not_printed_twice(self):
+        self._decide("pinned once", "EXACTLY ONE COPY OF THIS.", pinned=1)
+        p = hp.build_head_prompt(self.conn)
+        self.assertEqual(p.count("EXACTLY ONE COPY OF THIS."), 1)
+
+    def test_the_prompt_carries_the_cost_rule_and_the_bots_correction(self):
+        """Decision 45 (token discipline) and decision 36 (bots are not an oracle).  The
+        prompt used to assert the opposite of 36 in its own prose: 'BOTS ARE THE ORACLE'."""
+        p = hp.build_head_prompt(self.conn)
+        self.assertIn("SPEND LIKE IT COSTS", p)
+        self.assertIn("CHEAP model", p)
+        self.assertNotIn("BOTS ARE THE ORACLE", p)
+        self.assertIn("not an oracle", p)
+
+    def test_the_verification_traps_are_rendered_not_filed(self):
+        p = hp.build_head_prompt(self.conn)
+        self.assertIn("VERIFICATION TRAPS", p)
+        self.assertIn("EMPTY OUTPUT IS NOT A PASS", p)
+        self.assertIn("reload()", p)
+
+
+class TestInvariantsHaveTeeth(unittest.TestCase):
+    """The pod's own standing rule, from panopticon.engineering.verification_traps:
+    'A verification method is not trusted until it has been shown to FAIL on a
+    deliberately broken input.'  verify/invariants.py was a stub that could not fail."""
+
+    DAY = date(2026, 9, 9)
+
+    def _check(self):
+        from domains.panopticon.verify import invariants
+        return invariants.check(self.conn, today=self.DAY)
+
+    def test_a_clean_pod_passes(self):
+        self.assertEqual(self._check(), [], "control: the seeded pod must be clean")
+
+    def test_done_without_evidence_fails(self):
+        self.conn.execute("UPDATE tasks SET status='DONE', evidence='' WHERE id=1")
+        self.conn.commit()
+        self.assertTrue(any("no evidence" in v for v in self._check()))
+
+    def test_a_ruling_without_a_rationale_fails(self):
+        self.conn.execute("INSERT INTO decisions (decided_on, topic, ruling, rationale) "
+                          "VALUES ('2026-09-09','t','r','')")
+        self.conn.commit()
+        self.assertTrue(any("no rationale" in v for v in self._check()))
+
+    def test_a_canon_fact_the_prompt_references_but_the_db_lacks_fails(self):
+        self.conn.execute("DELETE FROM facts WHERE key=?", (hp.CANON_FACT_KEYS[0],))
+        self.conn.commit()
+        self.assertTrue(any(hp.CANON_FACT_KEYS[0] in v for v in self._check()))
+
+    def test_a_pinned_but_superseded_ruling_fails(self):
+        self.conn.execute("UPDATE decisions SET pinned=1, superseded_by=99 WHERE id=1")
+        self.conn.commit()
+        self.assertTrue(any("pinned AND superseded" in v for v in self._check()))
+
+    def test_standing_orders_are_required_once_the_log_outgrows_the_window(self):
+        for i in range(hp.DECISIONS_WINDOW + 2):
+            self.conn.execute("INSERT INTO decisions (decided_on, topic, ruling, rationale) "
+                              f"VALUES ('2026-09-09','filler {i}','r','why')")
+        self.conn.commit()
+        self.assertTrue(any("pinned standing orders" in v for v in self._check()),
+                        "rulings can age out of the prompt with nothing pinned")
+
+    def test_a_queue_nobody_has_touched_is_reported(self):
+        """2026-09-10: a full day of shipped work, zero task rows created or moved."""
+        from domains.panopticon.verify import invariants
+        vs = invariants.check(self.conn, today=date(2026, 9, 20))
+        self.assertTrue(any("untouched" in v for v in vs))

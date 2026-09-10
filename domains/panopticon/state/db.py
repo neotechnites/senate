@@ -55,7 +55,11 @@ CREATE TABLE IF NOT EXISTS decisions (
     rationale TEXT NOT NULL,
     evidence TEXT DEFAULT '',          -- playtest id, build tag, or 'judgement'
     decided_by TEXT NOT NULL DEFAULT 'ryan',
-    superseded_by INTEGER
+    superseded_by INTEGER,
+    -- A STANDING ORDER: rendered in every boot prompt, forever, never rotated out by a
+    -- newer ruling.  Ryan had to repeat several of these because the prompt only ever
+    -- showed the 8 newest decisions and everything older fell off the edge.
+    pinned INTEGER DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS scope_ledger (
@@ -140,6 +144,18 @@ CREATE TABLE IF NOT EXISTS content (
 """
 
 
+# Columns added after the pod already had a live DB.  CREATE TABLE IF NOT EXISTS cannot
+# add them, and this pod's DB is real state that must not be rebuilt to gain a column.
+_ADDED_COLUMNS = (("decisions", "pinned", "INTEGER DEFAULT 0"),)
+
+
+def _migrate(conn) -> None:
+    for table, col, decl in _ADDED_COLUMNS:
+        have = {r[1] for r in conn.execute(f"PRAGMA table_info({table})")}
+        if col not in have:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {col} {decl}")
+
+
 class Database:
     """Pod-local SQLite handle.  readonly=True opens sqlite mode=ro and skips the
     schema script entirely, so a hook that only reads can never migrate the pod."""
@@ -151,6 +167,7 @@ class Database:
             self.db_path.parent.mkdir(parents=True, exist_ok=True)
             with self.get_connection() as conn:
                 conn.executescript(SCHEMA_SQL)
+                _migrate(conn)
                 conn.commit()
 
     @contextmanager

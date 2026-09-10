@@ -14,7 +14,8 @@ for p in (str(REPO_ROOT), str(POD_DIR)):
 
 from domains.panopticon.state.db import Database                      # noqa: E402
 from domains.panopticon.state.canon import seed as seed_canon         # noqa: E402
-from domains.panopticon.verify import oracle, queue, schedule, scope         # noqa: E402
+from domains.panopticon.verify import (invariants, oracle, queue, schedule,  # noqa: E402
+                                       scope)
 from domains.panopticon.interface import head_prompt as hp            # noqa: E402
 
 
@@ -31,8 +32,14 @@ def main(argv=None):
     sub.add_parser("scope", help="The scope ledger")
     sub.add_parser("prompt", help="Print the head's DB-built system prompt")
     sub.add_parser("next", help="The work queue: what to do now, and by whom")
-    pl = sub.add_parser("plan", help="Fill the next PC session to an hour budget")
-    pl.add_argument("--hours", type=float, default=8.0)
+    sub.add_parser("plan", help="The next PC session, in order (no hour estimates)")
+    sub.add_parser("check", help="Run the pod invariants; nonzero exit on a violation")
+
+    dl = sub.add_parser("decisions", help="Read the rulings — the boot prompt only shows some")
+    dl.add_argument("--pinned", action="store_true", help="only the standing orders")
+    dl.add_argument("--all", action="store_true", help="include superseded rulings")
+    dl.add_argument("--grep", default="", help="substring match on topic/ruling/rationale")
+    dl.add_argument("--full", action="store_true", help="print rationale and evidence too")
 
     ta = sub.add_parser("task-add", help="Add a task")
     ta.add_argument("title"); ta.add_argument("lane",
@@ -59,6 +66,8 @@ def main(argv=None):
     d = sub.add_parser("decide", help="Record a design decision so it is never re-litigated")
     d.add_argument("topic"); d.add_argument("ruling")
     d.add_argument("--rationale", required=True); d.add_argument("--evidence", default="")
+    d.add_argument("--pin", action="store_true",
+                   help="STANDING ORDER: render it in every boot prompt, forever")
 
     b = sub.add_parser("build", help="Record a build")
     b.add_argument("tag"); b.add_argument("commit"); b.add_argument("--platform", default="windows")
@@ -90,6 +99,11 @@ def main(argv=None):
             hard = [b for b in brs if b["hard"]]
             if hard:
                 print(f"\n!! {len(hard)} HARD gate(s) breached — the ship date has moved.")
+            vs = invariants.check(conn)
+            if vs:
+                print(f"\n!! {len(vs)} INVARIANT VIOLATION(S) (./panopticon.py check):")
+                for x in vs:
+                    print(f"   - {x}")
         return 0
 
     if args.command == "seed":
@@ -119,7 +133,7 @@ def main(argv=None):
 
     if args.command == "plan":
         with _conn() as conn:
-            plan = queue.pc_session_plan(conn, args.hours)
+            plan = queue.pc_session_plan(conn)
             if not plan:
                 # State the fact, name the blockers, stop.  This used to append "which is
                 # the queue working as intended" -- the tool narrating its own blocked
@@ -133,12 +147,49 @@ def main(argv=None):
                     unmet = queue.unmet_blockers(conn, dict(b))
                     print(f"  {b['title']}  <- waiting on: {', '.join(unmet)}")
                 return 0
-            total = sum(t["estimate_hours"] for t in plan)
-            print(f"NEXT PC SESSION — {total}h of {args.hours}h:")
+            # No hour total.  Ryan, 2026-09-09: 'i have never ever ever seen you estimate
+            # hours correctly. rip it out of your brain.'  This printed "Xh of 8h" until
+            # 2026-09-10.
+            print("NEXT PC SESSION (in order — Ryan sets the cadence):")
             for t in plan:
-                print(f"  [{t['id']}] {t['title']} ({t['estimate_hours']}h)")
+                print(f"  [{t['id']}] {t['title']}")
                 if t["detail"]:
                     print(f"        {t['detail']}")
+        return 0
+
+    if args.command == "check":
+        with _conn(readonly=True) as conn:
+            vs = invariants.check(conn)
+        if not vs:
+            print("INVARIANTS OK — no violations.")
+            return 0
+        print(f"!! {len(vs)} INVARIANT VIOLATION(S):", file=sys.stderr)
+        for x in vs:
+            print(f"  - {x}", file=sys.stderr)
+        return 1
+
+    if args.command == "decisions":
+        with _conn(readonly=True) as conn:
+            q = "SELECT * FROM decisions WHERE 1=1"
+            a = []
+            if not args.all:
+                q += " AND superseded_by IS NULL"
+            if args.pinned:
+                q += " AND pinned=1"
+            if args.grep:
+                q += " AND (topic LIKE ? OR ruling LIKE ? OR rationale LIKE ?)"
+                a += [f"%{args.grep}%"] * 3
+            rows = conn.execute(q + " ORDER BY id", a).fetchall()
+        for r in rows:
+            mark = "PINNED " if r["pinned"] else ""
+            sup = f"  [SUPERSEDED BY {r['superseded_by']}]" if r["superseded_by"] else ""
+            print(f"[{r['id']}] {r['decided_on']} {mark}{r['topic']}{sup}")
+            print(f"    {r['ruling']}")
+            if args.full:
+                print(f"    WHY: {r['rationale']}")
+                print(f"    EVIDENCE: {r['evidence'] or 'judgement'}")
+            print()
+        print(f"{len(rows)} ruling(s).")
         return 0
 
     if args.command == "task-add":
@@ -204,12 +255,12 @@ def main(argv=None):
 
     if args.command == "decide":
         with _conn() as conn:
-            conn.execute("INSERT INTO decisions (decided_on, topic, ruling, rationale, evidence) "
-                         "VALUES (?,?,?,?,?)",
+            conn.execute("INSERT INTO decisions (decided_on, topic, ruling, rationale, "
+                         "evidence, pinned) VALUES (?,?,?,?,?,?)",
                          (date.today().isoformat(), args.topic, args.ruling, args.rationale,
-                          args.evidence))
+                          args.evidence, int(args.pin)))
             conn.commit()
-            print(f"recorded: {args.topic}")
+            print(f"recorded{' + PINNED' if args.pin else ''}: {args.topic}")
         return 0
 
     if args.command == "build":

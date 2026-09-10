@@ -18,63 +18,75 @@ from typing import Any, List, Optional
 POD_DIR = Path(__file__).resolve().parents[1]
 CANON_MAX_LINES = 150
 
+# Dropped 2026-09-10 to pay for the STANDING ORDERS block without growing the prompt:
+#   panopticon.time_budget   -- the schedule block and WORKING_DOCTRINE both state it
+#   panopticon.dev_machine   -- OVERRIDDEN by decision 26; host_block now carries the truth
+#   panopticon.tooling.astra -- not purchased; it is a RYAN_DECISION row in the queue
+#   panopticon.content.strategy -- decision 41 defers all content/publishing work, and
+#                               the devlog dates are already in the schedule block
+#   panopticon.repo.location -- pinned decision 24 states the path, the remote and the
+#                               never-use-gh rule in one line
+# Added: panopticon.no_idle_time (the hard design constraint the ghost mechanic exists to
+# serve) and panopticon.engineering.craft (what "do it right" actually means).
 CANON_FACT_KEYS: List[str] = [
     "panopticon.game.definition",
     "panopticon.ship.definition",
     "panopticon.engine",
     "panopticon.authorship",
     "panopticon.player_counts",
+    "panopticon.no_idle_time",
     "panopticon.testing.bots",
-    "panopticon.time_budget",
-    "panopticon.dev_machine",
-    "panopticon.content.strategy",
+    "panopticon.engineering.craft",
     "panopticon.music",
-    "panopticon.tooling.astra",
     "panopticon.reference.duck_hunt",
 ]
+
+# Rulings that must appear in EVERY boot prompt regardless of age.  Marked in the DB
+# (decisions.pinned) rather than listed here, so Ryan's next standing order needs a
+# `./panopticon.py decide --pin`, not a code edit.
+PINNED_MIN = 8
+DECISIONS_WINDOW = 6   # how many rulings the recency block renders
 
 OPEN_QUESTION_KEYS = ["panopticon.open.guard_vision", "panopticon.open.fable"]
 
 WORKING_DOCTRINE = """HOW THIS PROJECT IS BUILT (the constraint that designs everything):
-Ryan has ~8 hours a week AT THE PC and ~60 remote from a Mac while at work.  So the loop
-is a QUEUE: remote hours fill it, PC hours drain it.
-- REMOTE hours (most of the work): you write GDScript, run `godot --headless` bot matches,
-  run tests, commit, and report what became playable.  Ryan reviews a diff, not a game.
-  Also: asset review, devlog scripts, Steam ops, research, design conversation.
-- PC hours (scarce): ONLY what needs the machine and Ryan's eyes -- playing the build,
-  judging feel, laying out geometry, reacting to art in engine, capturing footage.
-  If a task can be done without playing, it must never consume a PC hour.  Protecting
-  those hours is your primary scheduling job.
-- BOTS ARE THE ORACLE.  Ryan has no friends to test with.  An unattended headless match
-  is how 60 remote hours produce evidence instead of suggestions.  Bot rows settle
-  numbers; only a HUMAN row settles whether it is fun.
-- FOOTAGE IS A BYPRODUCT.  Every PC session records.  Ryan never spends a PC hour
-  recording a devlog; editing happens in remote hours."""
+~8 hours a week AT THE PC, ~60 remote from a Mac at work.  Remote hours FILL the queue,
+PC hours DRAIN it.
+- REMOTE (most of the work): GDScript, headless runs, tests, commits, asset review,
+  research.  Ryan reviews a diff, not a game.
+- PC (scarce): only what needs the machine and Ryan's eyes -- playing, judging feel,
+  laying out geometry, reacting to art.  Anything doable without playing must never
+  consume a PC hour.  Protecting those hours is your primary scheduling job.
+- BOTS FILL THE SEATS RYAN HAS NO FRIENDS FOR.  They are opponents, not an oracle.
+  Decision 36: the head does not run balance sweeps and does not report findings about
+  whether a mechanic "works".  Ryan settles that by PLAYING it.
+- FOOTAGE IS A BYPRODUCT.  Every PC session records; editing happens in remote hours."""
 
 HEAD_DOCTRINE = """HEAD DOCTRINE:
-1. GROUND from the pod DB before asserting: `./panopticon.py status`, `fact KEY`, `scope`,
-   `schedule`.  Brief Ryan in 2-3 sentences naming each number's provenance.
+1. GROUND from the pod DB before asserting: `./panopticon.py status`, `fact KEY`,
+   `decisions`, `scope`, `schedule`.  Name each number's provenance.
 2. RYAN IS THE AUTHOR.  He decides what the game is, how it looks and how it plays.  You
-   implement, model, automate and research.  Offer options and evidence; never decide the
-   creative question, and never let a decision he made get quietly re-litigated -- check
-   `decisions` first.
-3. NEVER IDLE.  Ryan's instruction: keep evaluating what needs doing and keep either
-   yourself or him working.  `./panopticon.py next` is your standing queue -- take the top
-   REMOTE task, do it, record evidence, take the next.  If that queue is empty while
-   ship-blocking work remains, that is a PLANNING FAILURE: say what is blocking and what
-   would unblock it.  Never present an empty queue as a job well done.
-4. PROTECT THE PC HOURS.  A PC_REQUIRED task becomes READY only when its remote
-   prerequisites are DONE.  Arriving at a PC session with unfinished setup wastes the one
-   resource that cannot be bought back.
-5. DONE MEANS A BUILD THAT RAN (verify/oracle.py).  Not a document, not a merged commit,
-   not a passing unit test.  Never report progress from a plan.
-6. SCOPE ONLY SHRINKS (verify/scope.py).  A new ship-blocking feature must displace one by
-   name.  After feature freeze the ledger only cuts.
-7. HARD DATES ARE OTHER PEOPLE'S CLOCKS.  A missed Steam gate moves the ship date; say so
-   plainly and immediately rather than absorbing it.
-8. A question begets an answer and nothing else.  Answer it, then stop.
-9. Escalate to Ryan only for: a creative decision, a hard-date breach, a purchase, or
-   evidence that the core loop is not fun."""
+   implement, model, automate, research.  Never decide a creative question, never argue
+   your own idea into canon, and never re-litigate a ruling -- read `decisions` first.
+3. SPEND LIKE IT COSTS.  A small change must be SMALL IN COST, not reassigned to you
+   (decisions 43, 45).  Brief an agent in a few lines: name the files, name the change,
+   ONE verification command, a word cap on the report.  No consistency sweeps, no
+   proving-the-proof, no re-briefing what the agent can read from disk.  Mechanical edits
+   go to a CHEAP model.  If a two-line edit is costing five figures of tokens, stop.
+4. THE QUEUE IS THE WORK.  Every unit of work is a `tasks` row before it starts and ends
+   with `task-done --evidence`.  Work done outside the queue is invisible to the next
+   session and did not happen.  `./panopticon.py next` is the standing list; an empty
+   REMOTE queue with ship-blocking work open is a PLANNING FAILURE to escalate, never a
+   rest.  Take the top REMOTE task THAT SERVES THE CURRENT OBJECTIVE (decision 41) -- a
+   queue row older than the objective does not outrank it.
+5. PROTECT THE PC HOURS.  A PC_REQUIRED task is READY only when its remote prerequisites
+   are DONE.  Never surface a per-task hour estimate (decision 22).
+6. DONE MEANS A BUILD THAT RAN.  Not a document, not a commit, not a passing unit test.
+7. SCOPE ONLY SHRINKS.  A new ship-blocking feature displaces one by name.
+8. HARD DATES ARE OTHER PEOPLE'S CLOCKS.  Say a breach plainly and immediately.
+9. A question begets an answer and nothing else.  Answer it, then stop.
+10. Escalate only for: a creative decision, a hard-date breach, a purchase, or evidence
+   the core loop is not fun."""
 
 
 def _fact(conn, key: str):
@@ -82,18 +94,63 @@ def _fact(conn, key: str):
     return dict(r) if r else None
 
 
-def _clip(s: Any, n: int = 320) -> str:
+def _clip(s: Any, n: int = 260) -> str:
+    """Clip to a SENTENCE where one ends in range, otherwise to a word.
+
+    A ruling cut mid-word ("no isolated-copy re-verification, no '…") costs the same
+    tokens as a whole sentence and carries less, which is the worst trade in the prompt.
+    """
     s = " ".join(str(s).split())
-    return s if len(s) <= n else s[: n - 1] + "…"
+    if len(s) <= n:
+        return s
+    head = s[:n]
+    cut = max(head.rfind(". "), head.rfind(".\n"))
+    if cut >= int(n * 0.55):
+        return head[: cut + 1]
+    cut = head.rfind(" ")
+    return (head[:cut] if cut > 0 else head) + "…"
+
+
+def _norm(s: str) -> str:
+    return "".join(c for c in str(s).lower() if c.isalnum())
+
+
+def _echoes(digest: str, verbatim: str) -> bool:
+    """True when the head's summary is a restatement of Ryan's own sentence.
+
+    Word overlap rather than substring: the paraphrases differ by a word or two ("do it
+    right" vs "do this right") while carrying nothing new, and a substring test misses
+    every one of them.
+    """
+    dw = {w for w in (_norm(x) for x in digest.split()) if len(w) > 3}
+    vw = {w for w in (_norm(x) for x in verbatim.split()) if len(w) > 3}
+    if len(dw) < 4 or not vw:
+        return False
+    return len(dw & vw) / len(dw) >= 0.7
 
 
 def _digest(value: Any) -> str:
     if isinstance(value, dict):
-        for f in ("core_loop", "definition", "principle", "rule", "constraint", "plan",
-                  "goal", "what", "question", "engine", "optimize_for", "pc", "rules"):
+        # Ordered by how much of the fact the field carries.  Before 2026-09-10 this list
+        # missed RULE/CORRECTION/FORMAT/purpose, so four of the twelve canon entries fell
+        # through to json.dumps and rendered ~400 characters of escaped JSON each — the
+        # single largest block of unreadable text in the prompt.
+        picked = []
+        for f in ("RULE", "CORRECTION", "core_loop", "definition", "principle", "rule",
+                  "FORMAT", "constraint", "purpose", "plan", "goal", "what", "IS",
+                  "question", "engine", "optimize_for", "support_up_to", "pc", "rules",
+                  "strength"):
             v = value.get(f)
             if isinstance(v, str) and v.strip():
-                return v.strip()
+                picked.append(v.strip())
+                # A one-clause field on its own can misrepresent the fact.
+                # panopticon.player_counts rendered as "1v1 through 1v3" (optimize_for)
+                # while the scope ledger said "1v1 to 1v7", and the prompt read as a
+                # contradiction; the missing half was in the very next field.
+                if len(" / ".join(picked)) >= 70 or len(picked) == 2:
+                    break
+        if picked:
+            return " / ".join(picked)
         return json.dumps(value, sort_keys=True)
     return str(value)
 
@@ -111,7 +168,13 @@ def canon_block(conn, keys: Optional[List[str]] = None) -> str:
             val = f["value"]
         head = _clip(_digest(val))
         if f["authorized"]:
-            head += ' || RYAN VERBATIM: "' + _clip(f["authorized"], 180) + '"'
+            # Where the digest is just a tidied-up copy of Ryan's own sentence, print HIS
+            # words and drop the paraphrase.  Printing both doubled the cost of several
+            # canon entries to say the same thing twice.
+            if _echoes(head, f["authorized"]):
+                head = 'RYAN: "' + _clip(f["authorized"], 200) + '"'
+            else:
+                head += ' || RYAN: "' + _clip(f["authorized"], 130) + '"'
         elif "derived" in str(f["verified_by"]):
             head += f"  [{f['verified_by']} — NOT Ryan's words; confirm before relying on it]"
         lines.append(f"- {k}: {head}")
@@ -132,17 +195,69 @@ def open_questions_block(conn) -> str:
     return "\n".join(lines) if len(lines) > 1 else "OPEN QUESTIONS: none recorded"
 
 
-def decisions_block(conn, limit: int = 8) -> str:
+def standing_orders_block(conn) -> str:
+    """The rulings a fresh head must never rediscover the hard way.
+
+    WHY THIS EXISTS.  `decisions` held 46 rulings and the prompt rendered the 8 newest.
+    Everything older fell off the edge, so Ryan kept re-issuing orders he had already
+    given -- bots are not an oracle, never use the gh CLI, never estimate hours, do not
+    kill a process you did not start.  Recency is the wrong filter for a standing order,
+    so these are marked `pinned` in the DB and are ALWAYS rendered, in full sentences,
+    ahead of the recency window.
+    """
     rows = conn.execute(
-        "SELECT * FROM decisions WHERE superseded_by IS NULL ORDER BY id DESC LIMIT ?",
-        (limit,)).fetchall()
+        "SELECT * FROM decisions WHERE pinned=1 AND superseded_by IS NULL ORDER BY id"
+    ).fetchall()
+    if not rows:
+        live = conn.execute(
+            "SELECT count(*) n FROM decisions WHERE superseded_by IS NULL").fetchone()["n"]
+        if live > DECISIONS_WINDOW:
+            return (f"STANDING ORDERS: NONE PINNED, and {live} live rulings do not fit the "
+                    f"{DECISIONS_WINDOW}-row recency window — orders Ryan gave once are "
+                    "invisible to you. This is a DEFECT: `./panopticon.py check` fails.")
+        return ("STANDING ORDERS: none pinned yet — every ruling still fits the recency "
+                "block below. Pin one with `./panopticon.py decide ... --pin`.")
+    lines = ["STANDING ORDERS (pinned in `decisions` — Ryan gave each of these once and "
+             "should not have to again. Full text: `./panopticon.py decisions --pinned`):"]
+    for r in rows:
+        lines.append(f"- [{r['id']}] {r['topic']}: {_clip(r['ruling'], 170)}")
+    return "\n".join(lines)
+
+
+def verification_block(conn) -> str:
+    """Three verification methods have silently passed code that should have failed.
+    Each cost a session to rediscover, so the traps are rendered, not filed."""
+    f = _fact(conn, "panopticon.engineering.verification_traps")
+    if f is None:
+        return ("VERIFICATION TRAPS: fact MISSING FROM DB — assume no check you run has "
+                "been shown to have teeth.")
+    v = json.loads(f["value"])
+    lines = ["VERIFICATION TRAPS (`fact panopticon.engineering.verification_traps`):"]
+    for k in ("broken_1", "broken_2", "broken_3"):
+        if v.get(k):
+            lines.append(f"- {_clip(v[k], 170)}")
+    lines.append("- EMPTY OUTPUT IS NOT A PASS. A command that printed nothing has not "
+                 "told you it succeeded; check the exit code and assert on real output.")
+    if v.get("standing_rule"):
+        lines.append(f"RULE: {_clip(v['standing_rule'], 170)}")
+    return "\n".join(lines)
+
+
+def decisions_block(conn, limit: int = DECISIONS_WINDOW) -> str:
+    """The RECENCY window. Pinned rulings are excluded — they are already rendered above
+    as STANDING ORDERS, and printing them twice buys nothing but tokens."""
+    rows = conn.execute(
+        "SELECT * FROM decisions WHERE superseded_by IS NULL AND COALESCE(pinned,0)=0 "
+        "ORDER BY id DESC LIMIT ?", (limit,)).fetchall()
     if not rows:
         return ("DECISIONS: none recorded yet. Every design call Ryan makes goes in "
                 "`decisions` with its rationale, so it is never re-litigated later.")
-    lines = [f"RECENT DECISIONS (`decisions`; {len(rows)} shown, newest first):"]
+    total = conn.execute(
+        "SELECT count(*) n FROM decisions WHERE superseded_by IS NULL").fetchone()["n"]
+    lines = [f"RECENT DECISIONS ({len(rows)} of {total} live, newest first — the other "
+             f"{total - len(rows)} are not optional: `./panopticon.py decisions`):"]
     for r in rows:
-        lines.append(f"- {r['decided_on']} {r['topic']}: {_clip(r['ruling'], 160)} "
-                     f"[{r['evidence'] or 'judgement'}]")
+        lines.append(f"- [{r['id']}] {r['decided_on']} {r['topic']}: {_clip(r['ruling'], 160)}")
     return "\n".join(lines)
 
 
@@ -154,23 +269,27 @@ def _pc_is_up(conn) -> bool:
 def host_block(conn) -> str:
     """Where truth lives RIGHT NOW.
 
-    Until the PC is bootstrapped there is no other copy, so this host holds truth wherever
-    it runs -- a head that called itself a mirror would refuse to record the decisions Ryan
-    is making today, which is worse than the migration it was trying to avoid.  Once
-    `pc_bootstrapped` is DONE the PC owns truth and every other copy is a mirror, and the
-    handover is ONE planned migration rather than an accident.
+    CORRECTED 2026-09-10.  This used to declare any non-PC host a MIRROR once
+    `pc_bootstrapped` was DONE, which meant a head booting on the Mac -- where every
+    session actually happens -- read "do not report state from this DB" as its second
+    line.  Decision 26 reversed that on 2026-09-09: Ryan, verbatim, 'no we dont need to
+    make that change, ill work with you here for now.'  The Mac is authoritative for the
+    pod DB and both repos; the PC is a build, test and play target reached over Tailscale
+    SSH.  One writable DB, no split brain.
     """
     host = socket.gethostname()
     on_pc = host.lower().startswith(("desktop", "ryan-pc", "win"))
     if not _pc_is_up(conn):
         truth = ("PRE-BOOTSTRAP: the PC is not up yet, so THIS DB IS TRUTH wherever it runs. "
-                 "Record decisions here now; they migrate once with the repo when "
-                 "`pc_bootstrapped` completes. Build and playtest rows cannot exist yet.")
+                 "Record decisions here now. Build and playtest rows cannot exist yet.")
     elif on_pc:
-        truth = "This host IS the development PC: this DB is live truth."
+        truth = ("You are ON THE PC, which is a BUILD/TEST/PLAY TARGET ONLY (decision 26). "
+                 "The pod DB is authoritative on the MAC — no Domain Head state is written "
+                 "here. Build, run and play; report back to the Mac.")
     else:
-        truth = ("The PC is bootstrapped and owns truth. This copy is a MIRROR — do not "
-                 "report build or playtest state from it; ssh to the PC and read there.")
+        truth = ("THIS MAC IS AUTHORITATIVE for the pod DB and both repos (decision 26). "
+                 "The PC is a build, test and play target reached over Tailscale SSH. "
+                 "Record everything here; there is no second writable copy.")
     return f"HOST: {host} | pod {POD_DIR} | {truth}"
 
 
@@ -186,9 +305,11 @@ def build_head_prompt(conn, now: Optional[datetime] = None, today: Optional[date
         scope.block(conn, today),
         queue.block(conn, today),
         oracle.block(conn),
+        standing_orders_block(conn),
         canon_block(conn),
         open_questions_block(conn),
         decisions_block(conn),
+        verification_block(conn),
         WORKING_DOCTRINE,
         HEAD_DOCTRINE,
     ]
@@ -197,6 +318,6 @@ def build_head_prompt(conn, now: Optional[datetime] = None, today: Optional[date
 
 def canon_line_count(prompt: str) -> int:
     start = prompt.find("CANON (")
-    end = prompt.find("HOW THIS PROJECT IS BUILT")
+    end = prompt.find("OPEN QUESTIONS")
     body = prompt[start:end] if start >= 0 and end > start else prompt
     return len([l for l in body.splitlines() if l.strip()])
