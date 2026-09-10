@@ -1,0 +1,10 @@
+{
+  "domain_id": "steward",
+  "name": "Household Manager",
+  "description": "Ryan's obligations manager: house, vehicles, recurring maintenance and events. Output is obligations CLOSED and Ryan-hours saved.",
+  "category": "life_ops",
+  "created_at": "2026-09-09T20:50:16Z",
+  "active_lanes": [
+    "core"
+  ]
+}

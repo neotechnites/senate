@@ -1,0 +1,12 @@
+[Unit]
+Description=Steward head cadence - wakes through the day, speaks only when there is reason
+
+[Timer]
+# Mountain is UTC-6 (MDT). Wakes across Ryan's waking hours; 02:10 UTC is 20:10
+# Mountain, the slot where a heads-up for tomorrow is most useful.
+OnCalendar=*-*-* 14,17,20,23,02:10:00 UTC
+RandomizedDelaySec=900
+Persistent=true
+
+[Install]
+WantedBy=timers.target
