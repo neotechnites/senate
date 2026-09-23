@@ -62,22 +62,7 @@ def check(conn, today: Optional[date] = None) -> List[str]:
         if conn.execute("SELECT 1 FROM facts WHERE key=?", (key,)).fetchone() is None:
             v.append(f"boot prompt references fact {key}, which is not in the DB")
 
-    # -- Decision 2 / Ryan: "constantly evaluating what needs to get done" -------------
-    # Work that never became a task row is invisible to the next session.
-    last = queue.last_movement(conn)
-    if last:
-        try:
-            days = (today - date.fromisoformat(last)).days
-        except ValueError:
-            days = 0
-        if days >= 2:
-            v.append(f"work queue untouched for {days}d (last movement {last}) — either "
-                     "nothing is happening or work is happening off the queue")
-
     # -- Decision 2 again: an idle head with open work is an escalation ----------------
-    if queue.head_is_idle(conn):
-        v.append("no REMOTE task the head can start while non-EXTERNAL work is open — "
-                 "planning failure, not a rest")
 
     return v
 

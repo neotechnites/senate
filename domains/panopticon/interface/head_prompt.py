@@ -11,12 +11,19 @@ from __future__ import annotations
 
 import json
 import socket
+import subprocess
 from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, List, Optional
 
 POD_DIR = Path(__file__).resolve().parents[1]
 CANON_MAX_LINES = 150
+
+# The 9-day-stale-boot bug: the head prompt read only the DB task queue, which decision
+# 82/83 retired as a scheduler, so it had no live signal at all once that queue went
+# unused. This is that signal -- read straight from the game repo's git history, never
+# from memory or the DB.
+GAME_REPO_DIR = Path("/Users/ryanwhitehead/Documents/olympus/panopticon")
 
 # Dropped 2026-09-10 to pay for the STANDING ORDERS block without growing the prompt:
 #   panopticon.time_budget   -- the schedule block and WORKING_DOCTRINE both state it
@@ -73,12 +80,8 @@ HEAD_DOCTRINE = """HEAD DOCTRINE:
    ONE verification command, a word cap on the report.  No consistency sweeps, no
    proving-the-proof, no re-briefing what the agent can read from disk.  Mechanical edits
    go to a CHEAP model.  If a two-line edit is costing five figures of tokens, stop.
-4. THE QUEUE IS THE WORK.  Every unit of work is a `tasks` row before it starts and ends
-   with `task-done --evidence`.  Work done outside the queue is invisible to the next
-   session and did not happen.  `./panopticon.py next` is the standing list; an empty
-   REMOTE queue with ship-blocking work open is a PLANNING FAILURE to escalate, never a
-   rest.  Take the top REMOTE task THAT SERVES THE CURRENT OBJECTIVE (decision 41) -- a
-   queue row older than the objective does not outrank it.
+4. RYAN SAYS WHAT GETS BUILT (decision 82).  One fresh agent per task he names; the DB
+   records, it never generates work.
 5. PROTECT THE PC HOURS.  A PC_REQUIRED task is READY only when its remote prerequisites
    are DONE.  Never surface a per-task hour estimate (decision 22).
 6. DONE MEANS A BUILD THAT RAN.  Not a document, not a commit, not a passing unit test.
@@ -314,7 +317,57 @@ job cost 600k tokens and 3 hours.  Every cause was the head's; these rules are t
    paid to read it and paid again to extend it.
 6. STOP RULE.  An agent past 150k tokens or 40 minutes on a job briefed as small is
    stopped and reported, not sent more work.  Agents edit the live working tree only
-   when Ryan is not playing it; otherwise they hand back a file."""
+   when Ryan is not playing it; otherwise they hand back a file.
+7. Head never runs suites, harness or pc_sync in the foreground; reply first (decision 83)."""
+
+
+def _git(args: List[str]) -> Optional[str]:
+    """Run git in GAME_REPO_DIR; None on any error. Fails soft on purpose -- a broken
+    repo, a missing branch or no git at all must never take down the boot prompt."""
+    try:
+        r = subprocess.run(["git", "-C", str(GAME_REPO_DIR)] + args,
+                           capture_output=True, text=True, timeout=10)
+        if r.returncode != 0:
+            return None
+        return r.stdout.strip()
+    except Exception:
+        return None
+
+
+def _game_repo_default_branch() -> str:
+    ref = _git(["symbolic-ref", "refs/remotes/origin/HEAD"])
+    if ref and ref.startswith("refs/remotes/origin/"):
+        return ref[len("refs/remotes/origin/"):]
+    for name in ("main", "master"):
+        if _git(["rev-parse", "--verify", name]) is not None:
+            return name
+    return "master"
+
+
+def game_repo_block() -> str:
+    """GAME REPO (ground truth): what actually landed, read live from git. Never from
+    memory or the pod DB -- that is exactly the staleness this block exists to fix."""
+    branch = _game_repo_default_branch()
+    lines = [f"GAME REPO (ground truth) -- {GAME_REPO_DIR} @ {branch}:"]
+    log = _git(["log", "-15", "--date=short", "--pretty=%ad %s", branch])
+    if log is None:
+        lines.append(f"  !! git log failed on {branch} -- repo unreadable from here")
+    else:
+        for line in log.splitlines():
+            lines.append(f"  - {line}")
+    no_merged = _git(["branch", "--no-merged", branch, "--format=%(refname:short)"])
+    if no_merged is None:
+        lines.append("  !! git branch --no-merged failed")
+    else:
+        work = [b for b in no_merged.splitlines() if b.startswith("work-")]
+        if work:
+            lines.append("  WORK BRANCHES not yet merged to " + branch + ":")
+            for b in work:
+                subj = _git(["log", "-1", "--pretty=%s", b])
+                lines.append(f"    - {b}: {subj if subj is not None else '?'}")
+        else:
+            lines.append("  no work-* branches outstanding")
+    return "\n".join(lines)
 
 
 def build_head_prompt(conn, now: Optional[datetime] = None, today: Optional[date] = None) -> str:
@@ -324,6 +377,7 @@ def build_head_prompt(conn, now: Optional[datetime] = None, today: Optional[date
         "You are the Dedicated Domain Head for PANOPTICON: Ryan's 3D first-person "
         "asymmetrical multiplayer game, shipping on Steam 2027-04-01. Built "
         f"{now.isoformat(timespec='minutes')} from the pod database, not from memory.",
+        game_repo_block(),
         host_block(conn),
         schedule.block(conn, today),
         scope.block(conn, today),

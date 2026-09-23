@@ -101,32 +101,6 @@ def last_movement(conn) -> str:
     return (r["d"] or "") if r else ""
 
 
-def _staleness(conn, today: Optional[date] = None) -> str:
-    """Say out loud when the head has been working WITHOUT the queue.
-
-    WHY.  On 2026-09-10 the head shipped a ghost respawn, a kill volume, a race start
-    line, an eye rebuild and a runner mesh.  Not one of them was a task row: every row in
-    the table was created 2026-09-09 and nothing moved all day.  So the queue quietly
-    became a description of yesterday, and the next session's boot prompt would have
-    pointed a fresh head at Steam uploads.  A queue that can go stale silently is not a
-    queue.  Ryan, 2026-09-09: 'i want it constantly evaluating what needs to get done and
-    hacing either me or it working on it.'
-    """
-    today = today or date.today()
-    last = last_movement(conn)
-    if not last:
-        return "!! QUEUE EMPTY — no task rows at all. Nothing is being tracked."
-    try:
-        days = (today - date.fromisoformat(last)).days
-    except ValueError:
-        return ""
-    if days < 1:
-        return ""
-    return (f"!! QUEUE UNTOUCHED for {days}d (last movement {last}). If work happened "
-            f"since, it was NOT tracked — log it as tasks now. Work outside the queue is "
-            f"invisible to the next session.")
-
-
 def burn(conn) -> Dict[str, float]:
     """Estimated hours of open work, by lane. PC hours are the ones that can run out."""
     out: Dict[str, float] = {}
@@ -160,21 +134,6 @@ def block(conn, today: Optional[date] = None, hours: float = 8.0) -> str:
         for t in ip:
             since = t["started_on"] or "?"
             lines.append(f"    - [{t['id']}] {t['title']}  (since {since})")
-
-    stale = _staleness(conn, today)
-    if stale:
-        lines.append("  " + stale)
-
-    nr = next_remote(conn, limit=4)
-    if nr:
-        lines.append("  HEAD CAN START NOW (remote, unattended):")
-        for t in nr:
-            lines.append(f"    - [{t['id']}] {t['title']}")
-    elif head_is_idle(conn):
-        lines.append("  !! HEAD IDLE with open work — every remote task is blocked. "
-                     "Escalate: say what is blocking and what would unblock it.")
-    else:
-        lines.append("  No remote work open.")
 
     pc = [t for t in _rows(conn, "status='READY' AND lane='PC_REQUIRED'")][:4]
     if pc:

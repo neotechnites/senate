@@ -266,8 +266,7 @@ class TestWorkQueue(unittest.TestCase):
     def test_queue_reaches_the_head_prompt(self):
         p = hp.build_head_prompt(self.conn)
         self.assertIn("WORK QUEUE", p)
-        self.assertIn("THE QUEUE IS THE WORK", p)
-        self.assertIn("PLANNING FAILURE", p)
+        self.assertIn("RYAN SAYS WHAT GETS BUILT", p)
 
 
 class TestTruthOwnership(unittest.TestCase):
@@ -379,8 +378,3 @@ class TestInvariantsHaveTeeth(unittest.TestCase):
         self.assertTrue(any("pinned standing orders" in v for v in self._check()),
                         "rulings can age out of the prompt with nothing pinned")
 
-    def test_a_queue_nobody_has_touched_is_reported(self):
-        """2026-09-10: a full day of shipped work, zero task rows created or moved."""
-        from domains.panopticon.verify import invariants
-        vs = invariants.check(self.conn, today=date(2026, 9, 20))
-        self.assertTrue(any("untouched" in v for v in vs))
