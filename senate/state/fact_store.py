@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from senate.state.db import Database
-from senate.state.models import Fact, Hypothesis, ProjectState, Trial
+from senate.state.models import Fact, Hypothesis, ProjectState, Trial, Goal
 
 
 class FactStore:
@@ -233,5 +233,66 @@ class FactStore:
             cur = conn.execute("DELETE FROM project_state WHERE project_id = ?", (project_id,))
             conn.commit()
             return cur.rowcount > 0
+
+    # --- Goals CRUD ---
+    def save_goal(self, goal: Goal) -> None:
+        with self.db.get_connection() as conn:
+            conn.execute(
+                """
+                INSERT INTO goals (goal_id, title, category, target_metric, current_value, target_value, unit, ryan_hours_saved, status, associated_domains, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                ON CONFLICT(goal_id) DO UPDATE SET
+                    title = excluded.title,
+                    category = excluded.category,
+                    target_metric = excluded.target_metric,
+                    current_value = excluded.current_value,
+                    target_value = excluded.target_value,
+                    unit = excluded.unit,
+                    ryan_hours_saved = excluded.ryan_hours_saved,
+                    status = excluded.status,
+                    associated_domains = excluded.associated_domains,
+                    updated_at = CURRENT_TIMESTAMP
+                """,
+                (
+                    goal.goal_id,
+                    goal.title,
+                    goal.category,
+                    goal.target_metric,
+                    goal.current_value,
+                    goal.target_value,
+                    goal.unit,
+                    goal.ryan_hours_saved,
+                    goal.status,
+                    json.dumps(goal.associated_domains),
+                ),
+            )
+            conn.commit()
+
+    def get_goal(self, goal_id: str) -> Optional[Goal]:
+        with self.db.get_connection() as conn:
+            cur = conn.execute("SELECT * FROM goals WHERE goal_id = ?", (goal_id,))
+            row = cur.fetchone()
+            if not row:
+                return None
+            return Goal.from_row(tuple(row))
+
+    def list_goals(self, status: Optional[str] = None) -> List[Goal]:
+        with self.db.get_connection() as conn:
+            if status:
+                cur = conn.execute("SELECT * FROM goals WHERE status = ? ORDER BY created_at DESC", (status.upper(),))
+            else:
+                cur = conn.execute("SELECT * FROM goals ORDER BY status, created_at DESC")
+            return [Goal.from_row(tuple(r)) for r in cur.fetchall()]
+
+    def record_hours_saved(self, goal_id: str, hours: float) -> float:
+        with self.db.get_connection() as conn:
+            cur = conn.execute("SELECT ryan_hours_saved FROM goals WHERE goal_id = ?", (goal_id,))
+            row = cur.fetchone()
+            if not row:
+                raise ValueError(f"Goal '{goal_id}' not found.")
+            new_total = round(float(row["ryan_hours_saved"]) + hours, 2)
+            conn.execute("UPDATE goals SET ryan_hours_saved = ?, updated_at = CURRENT_TIMESTAMP WHERE goal_id = ?", (new_total, goal_id))
+            conn.commit()
+            return new_total
 
 

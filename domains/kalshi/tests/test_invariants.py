@@ -54,7 +54,7 @@ class TestKalshiInvariantsAndGate(unittest.TestCase):
         self.assertTrue(any("crosses touch" in v for v in violations))
 
     def test_exposure_caps_enforced(self):
-        """Verify $50 per-market allocation cap is enforced."""
+        """Verify the per-market allocation cap is enforced ($25 since 2026-09-05; $65 is over by any reading)."""
         valid, violations, _ = self.invariants.validate_order_proposal({
             "order_type": "limit",
             "price": 0.20,

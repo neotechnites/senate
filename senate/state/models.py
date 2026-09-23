@@ -87,3 +87,58 @@ class ProjectState:
     status: str  # ACTIVE, PAUSED, COMPLETED, ARCHIVED
     variables: Dict[str, Any] = field(default_factory=dict)
     updated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+
+@dataclass
+class Goal:
+    goal_id: str
+    title: str
+    category: str
+    target_metric: str
+    target_value: float
+    current_value: float = 0.0
+    unit: str = ""
+    ryan_hours_saved: float = 0.0
+    status: str = "ACTIVE"  # ACTIVE, PAUSED, ACHIEVED, ABANDONED
+    associated_domains: List[str] = field(default_factory=list)
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "goal_id": self.goal_id,
+            "title": self.title,
+            "category": self.category,
+            "target_metric": self.target_metric,
+            "current_value": self.current_value,
+            "target_value": self.target_value,
+            "unit": self.unit,
+            "ryan_hours_saved": self.ryan_hours_saved,
+            "status": self.status,
+            "associated_domains": self.associated_domains,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
+
+    @classmethod
+    def from_row(cls, row: tuple) -> "Goal":
+        domains = row[9]
+        if isinstance(domains, str):
+            try:
+                domains = json.loads(domains)
+            except Exception:
+                domains = [domains]
+        return cls(
+            goal_id=row[0],
+            title=row[1],
+            category=row[2],
+            target_metric=row[3],
+            current_value=float(row[4] or 0.0),
+            target_value=float(row[5] or 0.0),
+            unit=str(row[6] or ""),
+            ryan_hours_saved=float(row[7] or 0.0),
+            status=str(row[8] or "ACTIVE"),
+            associated_domains=list(domains or []),
+            created_at=str(row[10]),
+            updated_at=str(row[11]),
+        )

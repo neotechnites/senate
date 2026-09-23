@@ -12,6 +12,7 @@ Usage:
 
 import argparse
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -21,61 +22,46 @@ if str(SENATE_DIR) not in sys.path:
     sys.path.insert(0, str(SENATE_DIR))
 
 from senate.state.fact_store import FactStore
-from senate.interface.decision_matrix import render_senate_status
+from senate.interface.head_prompt import (build_senate_head_prompt, canon_line_count,
+                                          CANON_MAX_LINES)
 
 CLAUDE_BIN = os.path.expanduser("~/.local/bin/claude")
 
 
 def check_framework_integrity() -> bool:
-    """Run full Senate test suite to confirm mathematical and state integrity."""
+    """Run the full Senate suite to confirm state and mathematical integrity.
+
+    PYTEST, not `unittest discover` (2026-09-09): unittest skips senate/tests/conftest.py,
+    which redirects DEFAULT_DB_PATH to a temp file.  Without it this boot gate ran
+    test_cli_smoke's domain create/delete lifecycle against the REAL data/senate.db --
+    booting the head mutated sovereign state.  Ledger: test_suite_mutated_the_sovereign_db.
+    """
     res = subprocess.run(
-        [sys.executable, "-m", "unittest", "discover", "-s", "senate/tests", "-p", "test_*.py"],
+        [sys.executable, "-m", "pytest", "senate/tests", "-q", "-p", "no:cacheprovider"],
         cwd=str(SENATE_DIR),
         capture_output=True,
         text=True,
     )
+    out = res.stdout or ""
     if res.returncode != 0:
-        print(f"❌ TEST SUITE FAILED:\n{res.stderr}", file=sys.stderr)
-        return False
-    return True
+        print(f"❌ TEST SUITE FAILED:\n{out[-3000:]}\n{res.stderr[-1500:]}", file=sys.stderr)
+        return None
+    m = re.search(r"(\d+)\s+passed", out)
+    return int(m.group(1)) if m else 0
 
 
 def build_head_system_prompt(store: FactStore) -> str:
-    status_summary = render_senate_status(store)
-    return f"""You are the Executive Senate Head.
-Your mandate is direct execution and strategy to advance Ryan's goals (income generation, software engineering, skill mastery).
+    """The head's system prompt, BUILT FROM THE DATABASE.
 
-SINGLE BOOT DOCTRINE:
-The SQLite database (`senate.db`) is the SINGLE SOVEREIGN SOURCE OF TRUTH for all system state, verified facts, and project parameters.
-Any markdown files in archive/ or enchiridion/ are retired historical logs and outranked 100% by the database.
-
-CURRENT SYSTEM STATUS:
-{status_summary}
-
-THE 12 CONSTITUTIONAL SENATE STATEMENTS (RATIFIED LAWS):
-1. The senate directs intelligence at Ryan's goal. Output is goal progress and Ryan-hours saved — never artifacts.
-2. Members derive every decision from the goal; precedent and suggestion, Ryan's included, are hypotheses.
-3. No claim about the world is true until the world has said it.
-4. Work proceeds by the smallest step whose outcome reality can verify.
-5. A conclusion is what is needed to meet goals. Reasoning can be reviewed, premises can be proved, and data is needed to prove premises.
-6. Context is a budget: hold the canon, page everything else.
-7. The corpus shrinks and sharpens; lessons refine or gate, never append. Everything is stored — and ignored until pointed at or fetched.
-8. A question begets an answer and nothing else — no implications, no assumptions, no action. A question is never an invitation to act.
-9. Responses are brief: unread output is wasted. Go to the heart of what matters, ignore everything else, and clarify only when asked.
-10. Only Ryan ratifies canon. Claudes propose; [PROPOSED] steers nothing.
-11. Zero Unverified Claims: Any assertion regarding capital, venue truth, or file existence without an immediate preceding tool execution is strictly void.
-12. Adversarial Falsification: No model validates its own proposals. Deployment requires independent multi-model adversarial audit (`senate audit`).
-
-OPERATIONAL RULES:
-1. Domain-Agnostic Executive: Manage all Senate projects through dedicated domain pods (`senate domain create <id> <name>`).
-2. Tool-First Grounding: Never make a factual assertion without running a command first in the same turn.
-3. Zero Context Rot: Never store critical facts in raw chat text. Query and mutate ground truth via `senate.state` (`./senate.py fact`).
-4. Mathematical Verification: Every strategy or hypothesis must pass deterministic property verification (`./senate.py verify-hurdle`). Never guess arithmetic in chat.
-5. Multi-Model Adversary: Run `senate audit` on all code changes or strategy proposals before asking Ryan to review.
-6. Sourced Inputs Required: Capital deployment requires verified venue data artifacts. Self-reported inputs are strictly provisional.
-7. Subagent Delegation: Run long, compute-heavy tasks in isolated runners (`senate.harness`), keeping this main interaction lean and decision-ready for Ryan."""
-
-
+    This function used to be a hand-typed f-string: 14 "ratified" statements recited as
+    prose while data/senate.db held 3 facts and no mistakes ledger, plus a status block
+    whose "117.0 Ryan-hours saved" was a seed value from 2026-08-17 that nothing had
+    touched and no trial row backed.  The head recited canon it had never read and
+    reported its own marks as progress.  Everything now comes from senate/interface/
+    head_prompt.py, which reads facts, goals, caps and the mistakes ledger out of SQLite.
+    Ledger: head_prompt_typed_from_memory, goal_progress_self_marked, fact_written_but_never_read.
+    """
+    return build_senate_head_prompt(store)
 
 
 def main():
@@ -89,11 +75,13 @@ def main():
 
     # 1. Test Suite Integrity Check
     print("[1/2] Verifying Senate Core Framework (State, Verify, Harness, Interface)...", end=" ", flush=True)
-    if check_framework_integrity():
-        print("✅ ALL GREEN (31/31 Sovereign, Invariant, Adversarial & CLI Smoke Tests Passing)")
-    else:
+    # The count is READ FROM PYTEST, never printed as a literal. This banner used to
+    # assert "31/31 ... Passing" whatever the suite actually did.
+    n_passed = check_framework_integrity()
+    if n_passed is None:
         print("❌ INTEGRITY CHECK FAILED. Aborting spin-up.")
         sys.exit(1)
+    print(f"✅ {n_passed} tests passed (pytest, isolated DB).")
 
 
 
@@ -109,6 +97,10 @@ def main():
     # 3. Build System Prompt
     system_prompt = build_head_system_prompt(store)
 
+    n_canon = canon_line_count(system_prompt)
+    print(f"      Prompt built from the DB: canon {n_canon}/{CANON_MAX_LINES} lines "
+          "(statement 6 — context is a budget).")
+
     if args.dry:
         print("\nSYSTEM PROMPT:")
         print(system_prompt)
@@ -121,10 +113,14 @@ def main():
 
     initial_prompt = (
         "ORGANIZATIONAL HEAD RESUMPTION:\n"
-        "1. Query SQLite (`senate.db`) and check active domain states (`./senate.py domain list`) to resume where the organization left off.\n"
-        "2. Ensure background domain workers and standing ideator daemons are active.\n"
-        "3. Provide a concise 2-sentence executive check-in, then remain dormant and standing by for Ryan or subagent escalation."
+        "1. GROUND from SQLite before asserting anything: `./senate.py domain list`, the open "
+        "rows of the `mistakes` table, and the goals block already in your prompt.\n"
+        "2. Read the HANDOFF file named in your prompt.\n"
+        "3. Brief Ryan in 2-3 sentences, NAMING each number's provenance (measured / modelled "
+        "/ self-marked) and what is blocked. Then remain dormant, standing by for Ryan or a "
+        "subagent escalation."
     )
+
     cmd = [
         claude_path,
         "--system-prompt", system_prompt,

@@ -1,7 +1,14 @@
 {
-  "source": "sovereign_mandate:ryan_risk_limits",
-  "verified_at": "2026-08-15T12:00:00Z",
-  "max_per_market_usd": 50.00,
-  "max_total_portfolio_usd": 250.00,
-  "description": "Hard capital limits: maximum $50 collateral per single market, $250 across total portfolio (positions + resting)."
+  "source": "ryan-conversation (quoted verbatim, dated); FG-01 2026-09-05 rewrite of an agent-authored 'sovereign_mandate' file that carried $50/$250 with no quote",
+  "verified_at": "2026-09-05T00:00:00Z",
+  "verified_by": "ryan",
+  "fact_key": "kalshi.limits",
+  "per_market_usd": 25.00,
+  "total_usd": 530.00,
+  "max_seats": 20,
+  "replace_headroom_usd": 30.00,
+  "max_per_market_usd": 25.00,
+  "max_total_portfolio_usd": 530.00,
+  "authorized": "Ryan 2026-09-05: 'never to have more than 25$ in any market' (resting orders AND open positions, per ticker); Ryan 2026-08-20: 20 seats x $25 = $500 in a $530 cap ($30 replace-window headroom inside it).",
+  "description": "Ryan's capital limits: max $25 collateral per single market (resting orders + open positions, per ticker), 20 seats, $530 total with $30 replace-window headroom.  The compiled ceiling in verify/caps.py is the authority in code; kalshi.limits may only tighten it.  max_per_market_usd / max_total_portfolio_usd are the legacy field names kept for the kalshi.exposure.caps read-alias."
 }

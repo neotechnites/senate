@@ -3,6 +3,7 @@
 import argparse
 import json
 import sys
+import time
 from pathlib import Path
 from typing import List, Optional
 
@@ -42,6 +43,31 @@ def main(argv: Optional[List[str]] = None) -> int:
     fact_set.add_argument("domain", help="Fact domain")
     fact_set.add_argument("value", help="JSON value string or scalar")
     fact_set.add_argument("source", help="Source artifact citation")
+
+    # senate goal (Statement 1 Priority)
+    goal_p = subparsers.add_parser("goal", help="Manage and track Ryan's goals and saved hours")
+    goal_sub = goal_p.add_subparsers(dest="goal_cmd", required=True)
+
+    goal_list_p = goal_sub.add_parser("list", help="List all goals and progress")
+    goal_list_p.add_argument("--status", choices=["ACTIVE", "PAUSED", "ACHIEVED", "ABANDONED"], help="Filter by status")
+
+    goal_add_p = goal_sub.add_parser("add", help="Add a new sovereign goal")
+    goal_add_p.add_argument("goal_id", help="Goal identifier (e.g. goal_ai_framework)")
+    goal_add_p.add_argument("title", help="Human-readable title")
+    goal_add_p.add_argument("category", help="Category (e.g. SOFTWARE, PHYSICAL, CAPITAL)")
+    goal_add_p.add_argument("target_metric", help="Target metric description")
+    goal_add_p.add_argument("target_value", type=float, help="Numeric target value")
+    goal_add_p.add_argument("--unit", default="", help="Metric unit (e.g. USD, hours, percent)")
+    goal_add_p.add_argument("--domains", nargs="*", default=[], help="Associated domain pods")
+
+    goal_prog_p = goal_sub.add_parser("progress", help="Update progress on a goal")
+    goal_prog_p.add_argument("goal_id", help="Goal identifier")
+    goal_prog_p.add_argument("current_value", type=float, help="Current metric value")
+
+    goal_hrs_p = goal_sub.add_parser("save-hours", help="Log Ryan-hours saved by Senate automation")
+    goal_hrs_p.add_argument("goal_id", help="Goal identifier")
+    goal_hrs_p.add_argument("hours", type=float, help="Hours saved")
+
     # senate domain
     domain_p = subparsers.add_parser("domain", help="Manage and scaffold isolated Domain Pods")
     domain_sub = domain_p.add_subparsers(dest="domain_cmd", required=True)
@@ -126,10 +152,43 @@ def main(argv: Optional[List[str]] = None) -> int:
     mistakes_sub.add_parser("list", help="List all 10 compiled mistake invariants")
     mistakes_sub.add_parser("seed", help="Seed mistake invariants into SQLite database")
 
-    # senate daemon (Continuous Autonomous Cadence)
-    daemon_p = subparsers.add_parser("daemon", help="Run continuous autonomous cadence loop (Idle is a bug)")
-    daemon_p.add_argument("--interval", type=int, default=300, help="Cycle interval in seconds (default 300s)")
-    daemon_p.add_argument("--cycles", type=int, help="Optional max cycle count")
+    # senate bridge (Inter-Agent Direct IPC)
+    bridge_p = subparsers.add_parser("bridge", help="Direct Inter-Agent IPC communication bridge")
+    bridge_sub = bridge_p.add_subparsers(dest="bridge_cmd", required=True)
+    
+    bridge_sub.add_parser("status", help="Show bridge message status")
+    
+    bridge_read = bridge_sub.add_parser("read", help="Read messages from bridge")
+    bridge_read.add_argument("--agent", default="Claude", help="Target agent reading the bridge")
+
+    bridge_listen = bridge_sub.add_parser("listen", help="Listen for messages continuously")
+    bridge_listen.add_argument("--agent", default="Claude", help="Target agent name")
+    bridge_listen.add_argument("--interval", type=float, default=2.0, help="Polling interval in seconds")
+
+    bridge_send = bridge_sub.add_parser("send", help="Send message to bridge")
+    bridge_send.add_argument("--from-agent", default="Gemini", help="Sender agent name")
+    bridge_send.add_argument("--to-agent", default="Claude", help="Recipient agent name")
+    bridge_send.add_argument("--content", required=True, help="Message text")
+    
+    # senate arm (Interactive Token Minting)
+    arm_p = subparsers.add_parser("arm", help="Mint an interactive time-bounded capital ARM token")
+    arm_p.add_argument("--budget-usd", type=float, default=50.0, help="Maximum dollar budget allocated to this token (max $250)")
+    arm_p.add_argument("--ttl-min", type=float, default=60.0, help="Token time-to-live in minutes (default 60m)")
+    # W6 (2026-09-05): mint the NEXT token while the current one is still
+    # valid.  It is parked as the broker's standby and promoted only when the
+    # active token expires, so Ryan re-arms at any hour inside the 48h window
+    # instead of at the expiry minute.  Still interactive: same passphrase.
+    arm_p.add_argument("--standby", action="store_true",
+                       help="Park this token as STANDBY behind the active one; promoted when the active token expires (W6)")
+
+    # senate disarm (Immediate Token Revocation)
+    subparsers.add_parser("disarm", help="Revoke all active arm tokens and put broker into safe mode")
+
+    # senate broker (Sovereign Order Broker Management)
+    broker_p = subparsers.add_parser("broker", help="Manage Sovereign Order Broker daemon")
+    broker_sub = broker_p.add_subparsers(dest="broker_cmd", required=True)
+    broker_sub.add_parser("start", help="Start the broker Unix socket server")
+    broker_sub.add_parser("status", help="Query live broker armed status and metrics")
 
     args = parser.parse_args(argv)
 
@@ -175,6 +234,48 @@ def main(argv: Optional[List[str]] = None) -> int:
             try:
                 store.set_fact(fact)
                 print(f"✅ Fact saved: {args.key}")
+                return 0
+            except ValueError as e:
+                print(f"❌ ERROR: {e}", file=sys.stderr)
+                return 1
+
+    elif args.command == "goal":
+        from senate.state.models import Goal
+        if args.goal_cmd == "list":
+            goals = store.list_goals(status=args.status)
+            print(f"Found {len(goals)} goal(s):")
+            for g in goals:
+                pct = round((g.current_value / g.target_value) * 100.0, 1) if g.target_value > 0 else 0.0
+                print(f"  • [{g.status}] {g.goal_id}: {g.title} ({g.category}) — {g.current_value}/{g.target_value} {g.unit} ({pct}%) | {g.ryan_hours_saved:.1f}h saved")
+            return 0
+        elif args.goal_cmd == "add":
+            goal = Goal(
+                goal_id=args.goal_id,
+                title=args.title,
+                category=args.category.upper(),
+                target_metric=args.target_metric,
+                target_value=args.target_value,
+                unit=args.unit,
+                associated_domains=args.domains,
+            )
+            store.save_goal(goal)
+            print(f"✅ Goal '{goal.goal_id}' registered successfully.")
+            return 0
+        elif args.goal_cmd == "progress":
+            g = store.get_goal(args.goal_id)
+            if not g:
+                print(f"❌ Goal not found: {args.goal_id}", file=sys.stderr)
+                return 1
+            g.current_value = args.current_value
+            if g.current_value >= g.target_value:
+                g.status = "ACHIEVED"
+            store.save_goal(g)
+            print(f"✅ Progress updated for '{g.goal_id}': {g.current_value}/{g.target_value} {g.unit} (Status: {g.status})")
+            return 0
+        elif args.goal_cmd == "save-hours":
+            try:
+                new_total = store.record_hours_saved(args.goal_id, args.hours)
+                print(f"✅ Logged {args.hours:.1f} hours saved for '{args.goal_id}'. Total: {new_total:.1f} hours.")
                 return 0
             except ValueError as e:
                 print(f"❌ ERROR: {e}", file=sys.stderr)
@@ -476,6 +577,108 @@ def main(argv: Optional[List[str]] = None) -> int:
         daemon = SenateCadenceDaemon(interval_seconds=args.interval, max_cycles=args.cycles)
         daemon.start()
         return 0
+
+    elif args.command == "bridge":
+        from senate.bridge import Bridge
+        bridge = Bridge(agent_name=getattr(args, "from_agent", "Gemini"))
+        if args.bridge_cmd == "status":
+            bridge.print_channel_summary()
+            return 0
+        elif args.bridge_cmd == "send":
+            msg = bridge.send_message(
+                content=args.content,
+                target_agent=args.to_agent,
+            )
+            print(f"✅ Message sent [Turn {msg['turn']}] ({msg['sender']} -> {msg['target']})")
+            return 0
+        elif args.bridge_cmd == "read":
+            unread = bridge.get_unread_messages(for_agent=args.agent)
+            if not unread:
+                print(f"No unread messages for '{args.agent}'.")
+                latest = bridge.get_latest_message(for_agent=args.agent)
+                if latest:
+                    print(f"\n[Latest Message — Turn {latest['turn']} from {latest['sender']}]:\n")
+                    print(latest['content'])
+                return 0
+            for m in unread:
+                print(f"═════════════════════════ TURN {m['turn']} ═════════════════════════")
+                print(f"From: {m['sender']} | Type: {m['message_type']} | Date: {m['timestamp']}")
+                print("──────────────────────────────────────────────────────────────")
+                print(m["content"])
+                print("══════════════════════════════════════════════════════════════\n")
+                bridge.mark_read(m["id"])
+            return 0
+        elif args.bridge_cmd == "listen":
+            print(f"👂 Bridge listening for messages addressed to '{args.agent}'... (Press Ctrl+C to exit)")
+            seen_ids = set()
+            try:
+                while True:
+                    unread = bridge.get_unread_messages(for_agent=args.agent)
+                    for m in unread:
+                        if m["id"] not in seen_ids:
+                            seen_ids.add(m["id"])
+                            print(f"\n🔔 [NEW MESSAGE — Turn {m['turn']} from {m['sender']} at {m['timestamp']}]:")
+                            print("──────────────────────────────────────────────────────────────")
+                            print(m["content"])
+                            print("──────────────────────────────────────────────────────────────\n")
+                            bridge.mark_read(m["id"])
+                    time.sleep(args.interval)
+            except KeyboardInterrupt:
+                print("\nBridge listener stopped.")
+            return 0
+
+    elif args.command == "arm":
+        from senate.harness.order_broker import OrderBrokerClient
+        client = OrderBrokerClient()
+        # Ensure interactive confirmation
+        print(f"⚠️  SOVEREIGN CAPITAL ARMING REQUEST{' (STANDBY: promoted when the active token expires)' if getattr(args, 'standby', False) else ''}:")
+        print(f"   • Allocated Budget: ${args.budget_usd:.2f}")
+        print(f"   • Time To Live:     {args.ttl_min:.1f} minutes{' (counted from now, not from promotion)' if getattr(args, 'standby', False) else ''}")
+        print("Live orders submitted during this window will execute on Kalshi exchange.")
+        
+        try:
+            confirm = input("Type 'ARM SENATE LIVE' to confirm: ").strip()
+        except EOFError:
+            print("❌ Headless execution refused. Arming requires interactive terminal confirmation.", file=sys.stderr)
+            return 1
+
+        if confirm != "ARM SENATE LIVE":
+            print("❌ Arming cancelled. Exact phrase mismatch.", file=sys.stderr)
+            return 1
+
+        res = client.mint_token(budget_usd=args.budget_usd, ttl_minutes=args.ttl_min,
+                                passphrase=confirm, standby=bool(getattr(args, "standby", False)))
+        if res.get("status") == "ARMED":
+            print(f"✅ BROKER ARMED: Token ID '{res.get('token_id')}' active for ${res.get('budget_usd'):.2f} ({args.ttl_min}m TTL).")
+            return 0
+        elif res.get("status") == "STANDBY":
+            print(f"✅ STANDBY TOKEN PARKED: '{res.get('token_id')}' ${res.get('budget_usd'):.2f} ({args.ttl_min}m TTL). {res.get('message', '')}")
+            return 0
+        else:
+            print(f"❌ ARMING REFUSED: {res.get('reason')}", file=sys.stderr)
+            return 1
+
+    elif args.command == "disarm":
+        from senate.harness.order_broker import OrderBrokerClient
+        client = OrderBrokerClient()
+        res = client.revoke_token()
+        print(f"🔒 {res.get('message', 'Broker Disarmed.')}")
+        return 0
+
+    elif args.command == "broker":
+        from senate.harness.order_broker import SovereignOrderBroker, OrderBrokerClient
+        if args.broker_cmd == "start":
+            broker = SovereignOrderBroker()
+            try:
+                broker.start_socket_server()
+            except KeyboardInterrupt:
+                print("\nBroker server stopped cleanly.")
+            return 0
+        elif args.broker_cmd == "status":
+            client = OrderBrokerClient()
+            res = client.status()
+            print(json.dumps(res, indent=2))
+            return 0
 
     return 0
 

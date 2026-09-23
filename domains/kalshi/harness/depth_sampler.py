@@ -56,7 +56,8 @@ CREATE TABLE IF NOT EXISTS m3_depth_samples (
   yes_bid_qty INTEGER, no_bid_qty INTEGER,
   yes_book TEXT, no_book TEXT,
   http_ok INTEGER NOT NULL,
-  err TEXT
+  err TEXT,
+  yes_touch_qty REAL, no_touch_qty REAL
 );
 CREATE INDEX IF NOT EXISTS idx_m3ds_ticker_ts ON m3_depth_samples(ticker, ts_utc);
 """
@@ -66,6 +67,11 @@ def _db():
     conn = sqlite3.connect(DB_PATH, timeout=30)
     conn.execute("PRAGMA busy_timeout=30000")
     conn.executescript(DDL)
+    have = {r[1] for r in conn.execute("PRAGMA table_info(m3_depth_samples)")}
+    for col in ("yes_touch_qty", "no_touch_qty"):
+        if col not in have:
+            conn.execute(f"ALTER TABLE m3_depth_samples ADD COLUMN {col} REAL")
+    conn.commit()
     return conn
 
 
@@ -139,13 +145,22 @@ def _parse_book(body):
 def _snapshot_one(client, conn, run_id, tag, ticker):
     ts = time.time()
     try:
-        try:
-            body = client.fetch_public_orderbook(ticker)
-        except Exception as e:
-            if "429" not in str(e):
-                raise
-            time.sleep(2.0)  # single retry on venue rate limit
-            body = client.fetch_public_orderbook(ticker)
+        # Escalating backoff on venue rate limit (429). The API budget is shared
+        # with other domain pollers, so a single short retry is not enough.
+        body, last_err = None, None
+        for backoff in (0.0, 2.0, 5.0, 12.0):
+            if backoff:
+                time.sleep(backoff)
+            try:
+                body = client.fetch_public_orderbook(ticker)
+                last_err = None
+                break
+            except Exception as e:
+                last_err = e
+                if "429" not in str(e):
+                    raise
+        if last_err is not None:
+            raise last_err
         yes, no = _parse_book(body)
         yes_bid = max((p for p, _ in yes), default=None)
         no_bid = max((p for p, _ in no), default=None)
@@ -153,12 +168,16 @@ def _snapshot_one(client, conn, run_id, tag, ticker):
         no_ask = 100 - yes_bid if yes_bid is not None else None
         yes_qty = sum(q for _, q in yes)
         no_qty = sum(q for _, q in no)
+        # depth AT TOUCH = resting qty sitting at the best bid on each side
+        yes_touch = sum(q for p, q in yes if p == yes_bid) if yes_bid is not None else None
+        no_touch = sum(q for p, q in no if p == no_bid) if no_bid is not None else None
         conn.execute(
             "INSERT INTO m3_depth_samples (ts_utc, run_id, tag, ticker, yes_bid, yes_ask,"
-            " no_bid, no_ask, yes_bid_qty, no_bid_qty, yes_book, no_book, http_ok, err)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,NULL)",
+            " no_bid, no_ask, yes_bid_qty, no_bid_qty, yes_touch_qty, no_touch_qty,"
+            " yes_book, no_book, http_ok, err)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,NULL)",
             (ts, run_id, tag, ticker, yes_bid, yes_ask, no_bid, no_ask,
-             yes_qty, no_qty, json.dumps(yes), json.dumps(no)),
+             yes_qty, no_qty, yes_touch, no_touch, json.dumps(yes), json.dumps(no)),
         )
         return True
     except Exception as e:
@@ -183,9 +202,23 @@ def sample(date_token, interval, until_utc, once, tag, pace=0.35):
         loop_start = time.time()
         ok = 0
         for t in tickers:
-            ok += _snapshot_one(client, conn, run_id, tag, t)
+            # Commit per ticker: the network fetch + pace sleep inside one open
+            # transaction held the write lock ~25s/cycle, starving the daemon
+            # and fillrate logger into `database is locked` (2026-08-17).
+            # A locked write skips this snapshot instead of killing the run —
+            # a 60s-cadence sampler tolerates a dropped sample; dying loses
+            # the rest of the slate.
+            try:
+                ok += _snapshot_one(client, conn, run_id, tag, t)
+                conn.commit()
+            except sqlite3.OperationalError as e:
+                if "locked" not in str(e):
+                    raise
+                try:
+                    conn.rollback()
+                except Exception:
+                    pass
             time.sleep(pace)
-        conn.commit()
         print(f"{datetime.now(timezone.utc).isoformat(timespec='seconds')} wrote {ok}/{len(tickers)} books")
         if once:
             break
@@ -208,6 +241,8 @@ def main():
     s.add_argument("--until", default=None, help="UTC ISO time to stop, e.g. 2026-08-17T03:00:00Z")
     s.add_argument("--once", action="store_true")
     s.add_argument("--tag", default="live")
+    s.add_argument("--pace", type=float, default=0.35,
+                   help="seconds between per-ticker requests (raise if 429s appear)")
     args = ap.parse_args()
     if args.cmd == "discover":
         slate = discover(args.date_token)
@@ -218,7 +253,7 @@ def main():
     until = None
     if args.until:
         until = datetime.fromisoformat(args.until.replace("Z", "+00:00"))
-    return sample(args.slate, args.interval, until, args.once, args.tag)
+    return sample(args.slate, args.interval, until, args.once, args.tag, pace=args.pace)
 
 
 if __name__ == "__main__":

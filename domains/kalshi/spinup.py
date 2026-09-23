@@ -15,6 +15,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from domains.kalshi.interface.decision_matrix import render_kalshi_status
+from domains.kalshi.interface.head_prompt import build_kalshi_head_prompt
 from domains.kalshi.state.fact_store import FactStore
 from domains.kalshi.state.seed import seed_kalshi_database
 
@@ -22,16 +23,30 @@ POD_DIR = Path(__file__).resolve().parent
 CLAUDE_BIN = os.path.expanduser("~/.local/bin/claude")
 
 
+_LAST_SUMMARY = ""
+
+
+def res_summary() -> str:
+    return _LAST_SUMMARY
+
+
 def check_domain_integrity() -> bool:
     """Run local Kalshi property test suite."""
+    global _LAST_SUMMARY
+    # 2026-09-09: pytest, not unittest discover -- tests/conftest.py redirects
+    # the DB path to a temp file for the whole run, so the integrity check can
+    # never write into data/kalshi_domain.db (the laptop MIRROR must never be
+    # mutated; unittest discover skipped conftest and touched it).
     res = subprocess.run(
-        [sys.executable, "-m", "unittest", "discover", "-s", str(POD_DIR / "tests"), "-p", "test_*.py"],
-        cwd=str(ROOT_DIR),
+        [sys.executable, "-m", "pytest", str(POD_DIR / "tests"), "-q", "-p", "no:cacheprovider"],
+        cwd=str(POD_DIR),
         capture_output=True,
         text=True,
     )
+    tail = [ln for ln in (res.stdout or "").splitlines() if "passed" in ln or "failed" in ln]
+    _LAST_SUMMARY = tail[-1].strip(" =") if tail else ""
     if res.returncode != 0:
-        print(f"❌ DOMAIN TEST SUITE FAILED:\n{res.stderr}", file=sys.stderr)
+        print(f"❌ DOMAIN TEST SUITE FAILED:\n{(res.stdout or '')[-3000:]}\n{res.stderr[-2000:]}", file=sys.stderr)
         return False
     return True
 
@@ -44,7 +59,7 @@ def main():
     # 1. Test Suite Integrity Check
     print("[1/2] Verifying Kalshi Invariants & Property Tests...", end=" ", flush=True)
     if check_domain_integrity():
-        print("✅ ALL GREEN (24/24 Invariant, Payoff, Gate, Base-Rate & CLI Smoke Tests Passing)")
+        print("✅ ALL GREEN (" + (res_summary() or "pod suite") + ")")
     else:
         print("❌ INTEGRITY CHECK FAILED. Aborting spin-up.")
         sys.exit(1)
@@ -56,30 +71,10 @@ def main():
     print("[2/2] Local SQLite FactStore Active.")
     print("──────────────────────────────────────────────────────────────")
 
-    system_prompt = f"""You are the Dedicated Kalshi Domain Head for Ryan.
-You are the EXECUTIVE HEAD of the Kalshi organization.
-Your role is leadership, delegation, state governance, and capital allocation for Ryan.
-Your workspace is `domains/kalshi/` and your database is `data/kalshi_domain.db`.
-
-ORGANIZATIONAL HEAD DOCTRINE:
-1. RESUME & GROUND: On startup, immediately inspect SQLite (`kalshi_domain.db`) to pick up exactly where the organization left off (open orders, cash balance, active depth watches, pending experiments).
-2. SPAWN & DELEGATE: Launch and manage the background subagents/processes needed for 24/7 continuous operations (e.g. `./kalshi.py daemon` for tape/census scanning, ideation panel for hypothesis testing, depth watchers).
-3. EXECUTIVE DORMANT POSTURE: Once background operations are running, sit dormant and ready for Ryan. Do not spam chat. Escalate to Ryan ONLY when:
-   - A background subagent discovers a high-EV qualified deployment requiring Ryan's capital approval.
-   - An anomaly or critical invariant boundary is reached.
-   - Ryan speaks directly to you.
-
-CURRENT KALSHI DOMAIN STATUS:
-{status_summary}
-
-KEY HARD INVARIANTS & CONSTITUTIONAL RULES:
-1. Tool-First Grounding: You may NOT assert any claim regarding balances, positions, orders, or files without running a tool in that turn first.
-2. Fundamental Base-Rate Side-Gate: Never quote NO at <=35c on measures with high historical pass rates (>65% YES). Quoting book geometry against fundamentals is prohibited.
-3. Terminal Window Curfew: Never place or hold orders within 24h of window expiry (<24h).
-4. Total Capital Risk Cap: Maximum capital budget is $250. Fills DO NOT open headroom. Total Capital = Positions + Resting Orders <= $250.
-5. Mathematical Payoff Engine: Off-touch earning seats are NEVER canceled to hold cash. Run `./kalshi.py verify-payoff`.
-6. Execution Gate: Never touch orders without the gate. All actions must route through `./kalshi.py order place` / `./kalshi.py order cancel`.
-7. Zero Guessing: Query and mutate state strictly via `./kalshi.py` and SQLite."""
+    # 2026-09-09 (Ryan): the prompt is BUILT FROM THE DATABASE -- ratified
+    # facts, the open-mistake ledger and the deposits-based money line -- never
+    # typed from memory.  See interface/head_prompt.py for the receipts.
+    system_prompt = build_kalshi_head_prompt(store, status_summary)
 
     claude_path = CLAUDE_BIN if os.path.exists(CLAUDE_BIN) else "claude"
 
@@ -89,13 +84,14 @@ KEY HARD INVARIANTS & CONSTITUTIONAL RULES:
         return
 
     initial_prompt = (
-        "ORGANIZATIONAL HEAD RESUMPTION & SUBAGENT FLEET LAUNCH:\n"
-        "1. Query SQLite (`kalshi_domain.db`) to pick up where the organization left off.\n"
-        "2. Launch 3 active background subagents to work concurrently on our standing lanes:\n"
-        "   - Subagent 1 (Ideation & Kill-Testing): Continuously propose fresh prediction market hypotheses and run multi-model falsification via `senate ideate`.\n"
-        "   - Subagent 2 (Seats / LIP Optimization): Replay the 24h curfew and depth >= 250 safety floors on active books to optimize maker yield.\n"
-        "   - Subagent 3 (MLB / Cross-Venue): Prepare real-time depth instrumentation for Sunday's 17:00Z slate.\n"
-        "3. Confirm the 3 subagents are running in background, then remain dormant and standing by for Ryan or subagent escalation."
+        "ORGANIZATIONAL HEAD RESUMPTION:\n"
+        "1. Ground on the VPS (live truth), not this mirror: `ssh -i ~/.ssh/senate_vps_ed25519 "
+        "ubuntu@129.146.115.241 'cd /home/ubuntu/senate/domains/kalshi && ./kalshi.py status && "
+        "./kalshi.py placement show && systemctl --user list-units \"kalshi*\" --no-legend'`.\n"
+        "2. Read the latest memory file named in the prompt; check fills since it was written "
+        "(`./kalshi.py position list` on the VPS) and the seeder/rotation journals.\n"
+        "3. Brief Ryan in 2-3 sentences: account value vs deposits (or UNKNOWN), book N/20, fills "
+        "since the last brief, anything blocked.  Name each number's provenance.  Then stay dormant."
     )
     cmd = [claude_path, "--system-prompt", system_prompt, initial_prompt]
 

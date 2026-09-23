@@ -42,15 +42,14 @@ class TestIdeationAndMistakeInvariants(unittest.TestCase):
             compute_time_weighted_accrual(ticker="TEST", seat_hours=10.0, escrow_usd=0.0, realized_credit_usd=5.0)
 
     def test_mistake_invariants_seeded_in_sqlite(self):
-        """CRITICAL: Proves all 10 historical process failures are seeded as compiled impossible invariants."""
+        """CRITICAL: Proves all 12 historical process failures are seeded as compiled impossible invariants."""
         with self.db.get_connection() as conn:
             count = seed_mistakes_into_db(conn)
-            self.assertEqual(count, 10)
-
+            self.assertEqual(count, 12)
 
             cur = conn.execute("SELECT COUNT(*) as c FROM mistake_invariants WHERE status = 'COMPILED_IMPOSSIBLE'")
             row = cur.fetchone()
-            self.assertEqual(row["c"], 10)
+            self.assertEqual(row["c"], 12)
 
     def test_standing_ideation_organ_persists_survivors_and_graveyard(self):
         """CRITICAL: Proves Multi-Model Ideator submits to adversary and saves to SQLite registry."""

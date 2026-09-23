@@ -90,6 +90,20 @@ HISTORICAL_MISTAKES = [
         enforced_by_module="domains.kalshi.verify.accrual",
         test_function="test_time_weighted_accrual_calculation",
     ),
+    MistakeInvariant(
+        mistake_id="MISTAKE_11_CLI_SYNTAX_DRIFT",
+        name="Hallucinated CLI Commands and Shell Paths",
+        incident_description="Claude invented 'placement status' and fake directories instead of tool-first grounding and --help inspection.",
+        enforced_by_module="domains.kalshi.tests.test_cli_smoke",
+        test_function="test_all_cli_subcommands_smoke",
+    ),
+    MistakeInvariant(
+        mistake_id="MISTAKE_12_PROSE_POLICY_ACCUMULATION",
+        name="Prose Policy and Markdown Context Rot",
+        incident_description="Claude suggested creating markdown doctrine docs instead of compiling policy into SQLite fact tables.",
+        enforced_by_module="domains.kalshi.state.seed",
+        test_function="test_policy_stored_strictly_in_sqlite_facts",
+    ),
 ]
 
 

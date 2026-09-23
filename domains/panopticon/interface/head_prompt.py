@@ -47,7 +47,7 @@ CANON_FACT_KEYS: List[str] = [
 PINNED_MIN = 8
 DECISIONS_WINDOW = 6   # how many rulings the recency block renders
 
-OPEN_QUESTION_KEYS = ["panopticon.open.guard_vision", "panopticon.open.fable"]
+OPEN_QUESTION_KEYS = ["panopticon.open.guard_vision"]
 
 WORKING_DOCTRINE = """HOW THIS PROJECT IS BUILT (the constraint that designs everything):
 ~8 hours a week AT THE PC, ~60 remote from a Mac at work.  Remote hours FILL the queue,
@@ -293,6 +293,30 @@ def host_block(conn) -> str:
     return f"HOST: {host} | pod {POD_DIR} | {truth}"
 
 
+DELEGATION_RULES = """DELEGATION RULES (decisions 57, 58.  On 2026-09-10 a duplicate-stack-and-ramp
+job cost 600k tokens and 3 hours.  Every cause was the head's; these rules are the fix):
+1. ONE BRIEF, ONE PASS.  An agent gets its whole job in its first message and is NEVER
+   re-tasked while running.  New work waits for it to land and goes to a NEW agent.
+   Cost is per turn times context: a 500k-context agent making a one-line edit is the
+   most expensive edit in the project.
+2. A BRIEF IS: files + the change + report cap (<=120 words).  NO VERIFICATION OF
+   ANY KIND unless Ryan asked for it by name: no PC runs, no headless runs, no test
+   suites, no renders, no sightline or angle maths, no measurement.  Ryan verifies by
+   PLAYING.  He has said this repeatedly; every verification the head orders is
+   tokens spent to learn what one play session tells him for free.
+3. MODEL BY JOB.  Mechanical (edit, delete, wire, rename, regenerate, port): sonnet.
+   Design judgement, art direction, anything that must read Ryan: fable.  Never fable
+   by default.
+4. NO SCRATCH HARNESSES.  An agent writes no probes, diff scripts or PowerShell
+   wrappers to verify a change unless the brief names one.  Ryan verifies by playing.
+5. PROSE BUDGET.  The Godot repo's CLAUDE.md caps comments (doc <=2 lines,
+   editor_description <=1 sentence).  Half of match_controller.gd was prose; every agent
+   paid to read it and paid again to extend it.
+6. STOP RULE.  An agent past 150k tokens or 40 minutes on a job briefed as small is
+   stopped and reported, not sent more work.  Agents edit the live working tree only
+   when Ryan is not playing it; otherwise they hand back a file."""
+
+
 def build_head_prompt(conn, now: Optional[datetime] = None, today: Optional[date] = None) -> str:
     from domains.panopticon.verify import oracle, queue, schedule, scope
     now = now or datetime.now(timezone.utc)
@@ -312,6 +336,7 @@ def build_head_prompt(conn, now: Optional[datetime] = None, today: Optional[date
         verification_block(conn),
         WORKING_DOCTRINE,
         HEAD_DOCTRINE,
+        DELEGATION_RULES,
     ]
     return "\n\n".join(parts)
 

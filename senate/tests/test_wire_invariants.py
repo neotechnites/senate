@@ -60,14 +60,14 @@ class TestWireInvariantEnforcement(unittest.TestCase):
         vc.api_key_id = "test"
         vc._private_key = MagicMock()
 
-        # >$50 cap
+        # >$25 cap (CAP-4, 2026-09-05: Ryan's $25/market; the string said $50 until today)
         with self.assertRaises(ValueError) as ctx:
             vc.place_post_only_order(ticker="KXTEST", side="yes", price_cents=60, count=100, client_order_id="test")
-        self.assertIn("exceeds $50.00", str(ctx.exception))
+        self.assertIn("exceeds $25.00", str(ctx.exception))
 
         # >=90c trap
         with self.assertRaises(ValueError) as ctx:
-            vc.place_post_only_order(ticker="KXTEST", side="yes", price_cents=98, count=50, client_order_id="test")
+            vc.place_post_only_order(ticker="KXTEST", side="yes", price_cents=98, count=20, client_order_id="test")  # $19.60: under the $25 cap so the 90c guard is the one that fires
         self.assertIn(">= 90c strictly prohibited", str(ctx.exception))
 
 

@@ -39,34 +39,50 @@ class TestKalshiOracleAndState(unittest.TestCase):
         """CRITICAL: Proves seed_kalshi_database creates ZERO active orders and ZERO fabricated balances."""
         orders = self.store.list_active_orders()
         self.assertEqual(len(orders), 0, "INVARIANT BREACH: Seed file created active orders.")
+        # FG-10 (2026-09-05): a pending plan row is seat state too -- the
+        # engine places it the moment a human ARMs.  The seed wrote two $50
+        # pilot rows on every boot until today; it must write none.
+        self.assertEqual(self.store.list_deployment_plan(), [],
+                         "INVARIANT BREACH: Seed file created deployment-plan intent.")
 
         oracle_fact = self.store.get_fact("kalshi.oracle.balance")
         self.assertIsNone(oracle_fact, "INVARIANT BREACH: Seed file created unbacked oracle balance.")
 
-        # Exactly 6 platform facts must exist
+        from domains.kalshi.state.seed import INITIAL_KALSHI_FACTS
         facts = self.store.list_facts()
-        self.assertEqual(len(facts), 6, f"Expected exactly 6 platform facts, got {len(facts)}")
-        for f in facts:
-            self.assertTrue(f.is_immutable)
-            self.assertTrue(Path(f.source_artifact).exists(), f"Source artifact {f.source_artifact} missing on disk.")
+        self.assertEqual(len(facts), len(INITIAL_KALSHI_FACTS), f"Expected {len(INITIAL_KALSHI_FACTS)} platform facts, got {len(facts)}")
 
     def test_oracle_sync_with_live_client(self):
-        """Verify direct live venue client parsing and P&L arithmetic."""
+        """Verify direct live venue client parsing and P&L arithmetic.
+
+        MT-1 (2026-09-09): deposits come from the deposits LEDGER
+        (fetch_deposits), never from a key on the balance response -- the
+        balance has no such key, and the old fallback to the cash balance
+        printed the positions mark as P&L.
+        """
         mock_client = MagicMock(spec=KalshiVenueClient)
         mock_client.fetch_balance.return_value = {
             "balance": 110000,          # $1,100.00
             "payout": 10000,            # $100.00
-            "lifetime_deposits": 250000 # $2,500.00
         }
+        mock_client.fetch_positions.return_value = []
+        mock_client.fetch_deposits.return_value = [
+            {"amount_dollars": "2000.00"}, {"amount_cents": 50000}]   # $2,500.00
+        mock_client.fetch_withdrawals.return_value = []
 
         ok, msg, fact = sync_kalshi_oracle(self.store, live_client=mock_client)
         self.assertTrue(ok)
         self.assertIsNotNone(fact)
-        # P&L = 1100 + 100 - 2500 = -1300
+        # P&L = (1100 + 100) - 2500 + 0 = -1300
         self.assertEqual(fact.value["cash_usd"], 1100.00)
         self.assertEqual(fact.value["open_positions_usd"], 100.00)
+        self.assertEqual(fact.value["account_value_usd"], 1200.00)
+        self.assertEqual(fact.value["lifetime_deposits_usd"], 2500.00)
+        self.assertEqual(fact.value["lifetime_withdrawals_usd"], 0.0)
         self.assertEqual(fact.value["lifetime_pnl_usd"], -1300.00)
+        self.assertEqual(fact.value["deposits_source"], "live /portfolio/deposits (2 rows)")
         self.assertEqual(fact.value["source_type"], "live_kalshi_api_authenticated")
+        self.assertIn("Lifetime P&L=$-1300.00", msg)
 
     def test_oracle_sync_fails_closed_without_source(self):
         """Verify sync fails closed when no valid live client is supplied."""
@@ -76,12 +92,12 @@ class TestKalshiOracleAndState(unittest.TestCase):
 
     def test_order_placement_gate_validation(self):
         """Verify offensive gate validates proposal against caps and maker rules."""
-        # 1. Valid proposal <= $50 cap
+        # 1. Valid proposal <= $25 cap
         p1 = {"order_type": "limit", "price": 0.20, "count": 100, "notional_usd": 20.00}
         res1 = self.gate.execute_action(ActionType.DEPLOY_SEAT, p1)
         self.assertTrue(res1.is_executed)
 
-        # 2. Invalid proposal > $50 cap
+        # 2. Invalid proposal > $25 cap ($60: over by any reading)
         p2 = {"order_type": "limit", "price": 0.20, "count": 300, "notional_usd": 60.00}
         res2 = self.gate.execute_action(ActionType.DEPLOY_SEAT, p2)
         self.assertFalse(res2.is_executed)

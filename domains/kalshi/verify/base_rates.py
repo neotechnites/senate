@@ -38,6 +38,26 @@ HISTORICAL_BASE_RATES: Dict[str, Dict[str, Any]] = {
 }
 
 
+def find_base_rate_rule(
+    ticker: str,
+    market_title: str = "",
+    market_subtitle: str = "",
+) -> Optional[Tuple[str, Dict[str, Any]]]:
+    """Return the (rule_key, rule) covering this market, or None if no rule applies.
+
+    A rule covers a market only when BOTH its family prefix and at least one
+    keyword match — the same condition under which `evaluate_fundamental_base_rate`
+    can actually evaluate it. No match means the family has NO base-rate coverage
+    and must be flagged by callers, never silently passed.
+    """
+    ticker_upper = ticker.upper()
+    text_corpus = f"{ticker_upper} {market_title} {market_subtitle}".lower()
+    for rule_key, rule in HISTORICAL_BASE_RATES.items():
+        if rule["family"] in ticker_upper and any(kw in text_corpus for kw in rule["keywords"]):
+            return rule_key, rule
+    return None
+
+
 def evaluate_fundamental_base_rate(
     ticker: str,
     side: str,

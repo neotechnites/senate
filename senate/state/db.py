@@ -7,7 +7,13 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Generator, Optional
 
-DEFAULT_DB_PATH = Path(__file__).resolve().parents[2] / "data" / "senate.db"
+# SENATE_DB_PATH lets a test session (or any subprocess it spawns) redirect sovereign
+# state to a temp file.  Receipt, 2026-09-09: senate/tests/test_cli_smoke.py builds and
+# deletes real domain pods through FactStore() while spinup.py runs the whole suite at
+# boot -- so BOOTING the head wrote to data/senate.db.  The Kalshi pod hit the same thing
+# and had to move its boot check to pytest, because `unittest discover` skips conftest.
+DEFAULT_DB_PATH = Path(os.environ.get("SENATE_DB_PATH")
+                       or Path(__file__).resolve().parents[2] / "data" / "senate.db")
 
 SCHEMA_SQL = """
 PRAGMA journal_mode = WAL;
@@ -91,18 +97,62 @@ CREATE TABLE IF NOT EXISTS mistake_invariants (
     status TEXT CHECK(status IN ('COMPILED_IMPOSSIBLE', 'REGRESSION_TESTED')) DEFAULT 'COMPILED_IMPOSSIBLE',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS mistakes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    receipt TEXT NOT NULL,
+    loss_usd REAL DEFAULT 0.0,
+    prevention TEXT NOT NULL,
+    invariant_status TEXT CHECK(invariant_status IN ('COMPILED_IMPOSSIBLE', 'REGRESSION_TESTED', 'UNENFORCED')) DEFAULT 'UNENFORCED',
+    status TEXT CHECK(status IN ('OPEN', 'MITIGATED')) DEFAULT 'OPEN',
+    ratified_on TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_mistakes_status ON mistakes(status);
+
+CREATE TABLE IF NOT EXISTS goals (
+    goal_id TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    category TEXT NOT NULL,
+    target_metric TEXT NOT NULL,
+    current_value REAL DEFAULT 0.0,
+    target_value REAL NOT NULL,
+    unit TEXT DEFAULT '',
+    ryan_hours_saved REAL DEFAULT 0.0,
+    status TEXT CHECK(status IN ('ACTIVE', 'PAUSED', 'ACHIEVED', 'ABANDONED')) DEFAULT 'ACTIVE',
+    associated_domains JSON NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 """
 
 
 class Database:
-    def __init__(self, db_path: Optional[Path] = None):
+    """SQLite handle for the sovereign Senate state.
+
+    M-RO (2026-09-09, ported from the Kalshi pod): `readonly=True` opens the file
+    with sqlite `mode=ro` and SKIPS the schema script entirely.  A reader -- the
+    UserPromptSubmit state-surface hook runs on every single turn -- must never be
+    able to run a migration against the sovereign DB as a side effect of being
+    asked what is true.
+    """
+
+    def __init__(self, db_path: Optional[Path] = None, readonly: bool = False):
         self.db_path = Path(db_path) if db_path else DEFAULT_DB_PATH
-        self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        self._init_db()
+        self.readonly = bool(readonly)
+        if not self.readonly:
+            self.db_path.parent.mkdir(parents=True, exist_ok=True)
+            self._init_db()
 
     @contextmanager
     def get_connection(self) -> Generator[sqlite3.Connection, None, None]:
-        conn = sqlite3.connect(str(self.db_path), timeout=30.0)
+        if self.readonly:
+            uri = f"file:{self.db_path.as_posix()}?mode=ro"
+            conn = sqlite3.connect(uri, timeout=30.0, uri=True)
+        else:
+            conn = sqlite3.connect(str(self.db_path), timeout=30.0)
         conn.row_factory = sqlite3.Row
         try:
             yield conn

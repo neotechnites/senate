@@ -13,6 +13,10 @@ for p in [str(REPO_ROOT), str(POD_DIR)]:
 
 from domains.kalshi.harness.gate import ActionType, ExecutionGate
 from domains.kalshi.harness.census_scanner import CensusScanner
+# the hermetic census harness (temp DB + stubbed venue) lives with the gate tests
+from domains.kalshi.tests.test_census_gates import (DEEP_BOOK,
+                                                    CensusGateTestBase,
+                                                    _hours_from_now)
 from domains.kalshi.state.db import Database
 from domains.kalshi.state.fact_store import FactStore
 from domains.kalshi.state.models import ActiveOrder, Fact
@@ -82,14 +86,18 @@ class TestBaseRatesCurfewAndBudget(unittest.TestCase):
         self.assertTrue(valid2)
 
     def test_total_portfolio_budget_cap_includes_positions_and_resting(self):
-        """CRITICAL: Proves fills into positions DO NOT create headroom; total capital <= $250 is enforced."""
-        # 1. Simulate $137.27 locked in positions in oracle balance
+        """CRITICAL: Proves fills into positions DO NOT create headroom; total capital <= $530 is enforced.
+
+        FG-01 (2026-09-05): was written against a $250 total the seed carried
+        without Ryan's authority; his cap is $530 (20 seats x $25 + $30 replace
+        headroom, 2026-08-20), so the numbers below are rescaled to it."""
+        # 1. Simulate $437.27 locked in positions in oracle balance
         self.store.set_fact(Fact(
             key="kalshi.oracle.balance",
             domain="kalshi",
             value={
                 "cash_usd": 850.00,
-                "open_positions_usd": 137.27,
+                "open_positions_usd": 437.27,
                 "lifetime_deposits_usd": 1000.00,
                 "timestamp": "2026-08-15T12:00:00Z",
             },
@@ -97,16 +105,16 @@ class TestBaseRatesCurfewAndBudget(unittest.TestCase):
             is_immutable=False,
         ))
 
-        # 2. Add 2 resting orders totaling $99.88 collateral
+        # 2. Add 2 resting orders totaling $49.72 collateral
         self.store.save_order(ActiveOrder(
-            order_id="ord1", ticker="T1", side="yes", price=0.22, count=227, collateral_usd=49.94, status="RESTING", lane="autoseat"
+            order_id="ord1", ticker="T1", side="yes", price=0.22, count=113, collateral_usd=24.86, status="RESTING", lane="autoseat"
         ))
         self.store.save_order(ActiveOrder(
-            order_id="ord2", ticker="T2", side="yes", price=0.22, count=227, collateral_usd=49.94, status="RESTING", lane="autoseat"
+            order_id="ord2", ticker="T2", side="yes", price=0.22, count=113, collateral_usd=24.86, status="RESTING", lane="autoseat"
         ))
 
-        # Total currently deployed = $137.27 (positions) + $99.88 (resting) = $237.15
-        # Attempting to deploy another $49.94 (Total = $287.09 > $250 cap) MUST BE REJECTED!
+        # Total currently deployed = $437.27 (positions) + $49.72 (resting) = $486.99
+        # Attempting to deploy another $49.94 (Total = $536.93 > $530 cap) MUST BE REJECTED!
         over_proposal = {
             "ticker": "KXFEDFUNDSYEAR-26-HOLD",
             "side": "yes",
@@ -116,17 +124,90 @@ class TestBaseRatesCurfewAndBudget(unittest.TestCase):
         }
         valid, violations, _ = self.engine.validate_order_proposal(over_proposal)
         self.assertFalse(valid)
-        self.assertTrue(any("exceeds total portfolio budget" in v for v in violations))
+        self.assertTrue(any("exceeds total portfolio budget of $530.00" in v for v in violations), violations)
 
-    def test_multi_family_census_scanner(self):
-        """Verify multi-family scanner classifies families across 7 days."""
-        scanner = CensusScanner()
+class TestMultiFamilyCensusScan(CensusGateTestBase):
+    """The discovery sweep must return ONE representative per family, so that a
+    single large slate drop cannot crowd every other family out of the census
+    window, and each representative must carry a real verdict.
+
+    THIS TEST USED TO HIT THE LIVE VENUE.  It built a bare CensusScanner(), which
+    defaults to the production kalshi_domain.db and a real KalshiVenueClient, so
+    it synced the live catalog over the network, WROTE the live domain DB, and
+    then asserted that three hard-coded families (KXFEDFUNDSYEAR, KXUSCPIYEAR,
+    KXSTATEBALLOTMEASURE) were among the results.  That asserts the venue's
+    inventory on the day the test runs, not the scanner's behaviour: the sweep
+    takes the 250 newest families, the live catalog grew past that tonight, and
+    KXFEDFUNDSYEAR aged out — so the test went red without a line of scanner code
+    being wrong.  It is now hermetic (temp DB, stubbed client, seeded families),
+    which is also what keeps it from writing production state.
+    """
+
+    FAMILIES = ("KXFEDFUNDSYEAR", "KXUSCPIYEAR", "KXSTATEBALLOTMEASURE",
+                "KXNFLGAME", "KXMLBGAME", "KXBTCD")
+
+    def _slate(self):
+        """One event per family, plus a SECOND market inside one family — the
+        crowding case the per-family grouping exists to defeat."""
+        events = []
+        for fam in self.FAMILIES:
+            events.append(self.event(
+                f"{fam}-26AUG21",
+                [{"ticker": f"{fam}-26AUG21-A",
+                  "expected_expiration_time": _hours_from_now(90),
+                  "status": "active"}],
+                title=f"{fam} stub"))
+        events.append(self.event(
+            "KXNFLGAME-26AUG22",
+            [{"ticker": f"KXNFLGAME-26AUG22-{i}",
+              "expected_expiration_time": _hours_from_now(90),
+              "status": "active"} for i in range(40)],
+            title="KXNFLGAME slate drop"))
+        return events
+
+    def test_every_family_gets_exactly_one_classified_representative(self):
+        events = self._slate()
+        books = {m["ticker"]: DEEP_BOOK
+                 for ev in events for m in ev["markets"]}
+        scanner, _ = self.make_scanner(events, books=books)
         opps = scanner.scan_family_opportunities()
-        self.assertGreaterEqual(len(opps), 5)
+
         families = [o["family"] for o in opps]
-        self.assertIn("KXFEDFUNDSYEAR", families)
-        self.assertIn("KXUSCPIYEAR", families)
-        self.assertIn("KXSTATEBALLOTMEASURE", families)
+        for fam in self.FAMILIES:
+            self.assertIn(fam, families)
+        self.assertEqual(sorted(families), sorted(set(families)),
+                         "the sweep must return ONE row per family")
+        self.assertGreaterEqual(len(opps), 5)
+
+    def test_a_slate_drop_cannot_crowd_out_the_other_families(self):
+        """40 markets in one family must not displace the other five."""
+        events = self._slate()
+        books = {m["ticker"]: DEEP_BOOK
+                 for ev in events for m in ev["markets"]}
+        scanner, _ = self.make_scanner(events, books=books)
+        families = {o["family"] for o in scanner.scan_family_opportunities()}
+        self.assertTrue(set(self.FAMILIES) <= families)
+
+    def test_each_representative_carries_a_verdict_and_a_reason(self):
+        events = self._slate()
+        books = {m["ticker"]: DEEP_BOOK
+                 for ev in events for m in ev["markets"]}
+        scanner, _ = self.make_scanner(events, books=books)
+        for o in scanner.scan_family_opportunities():
+            self.assertTrue(o["status"], f"no verdict on {o['ticker']}")
+            self.assertTrue(o["reason"], f"no reason on {o['ticker']}")
+            self.assertIn("curfew", o["gates"])
+
+    def test_ballot_families_are_still_yes_only(self):
+        """The base-rate side gate survives the multi-family path: a BALLOT
+        family is never recommended NO."""
+        events = self._slate()
+        books = {m["ticker"]: DEEP_BOOK
+                 for ev in events for m in ev["markets"]}
+        scanner, _ = self.make_scanner(events, books=books)
+        ballot = next(o for o in scanner.scan_family_opportunities()
+                      if o["family"] == "KXSTATEBALLOTMEASURE")
+        self.assertNotIn("no", ballot["recommended_sides"])
 
 
 if __name__ == "__main__":

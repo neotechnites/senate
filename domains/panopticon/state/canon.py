@@ -34,19 +34,14 @@ FACTS = [
      "ryan", 1),
 
     ("panopticon.reference.duck_hunt", {
-        "source": "Halo Reach, Forge World custom gametype; researched 2026-09-09",
-        "rules": "Ducks run a linear obstacle course; a hunter in an elevated nest with a "
-                 "precision rifle shoots them. The hunter relocates to a higher nest as the "
-                 "ducks clear each floor. Cover falls away and traps increase per level. "
-                 "Ducks win by surviving the course; in some variants they then receive "
-                 "weapons and extra health and turn on the hunter.",
-        "balance_knob": "Duck starting HP is tuned against the hunter's weapon choice.",
-        "lobby_size": "8-16 in the original",
-        "variants": "Duck Duck Hunt — a shot duck becomes a hunter, so the round compounds.",
-        "urls": "https://halocustoms.com/maps/duck-hunt.2330/ ; "
-                "https://steamcommunity.com/sharedfiles/filedetails/?id=1081185139",
-    }, "web research 2026-09-09", "Go do research about the duck hunt custom game mode in halo "
-       "reach, that is the gameplay.", "ryan_directed_research", 1),
+        "what": "Halo Reach Duck Hunt: the hunter sits in ONE fixed elevated nest and never "
+                "moves. The ducks run an obstacle course back and forth in front of it; the "
+                "course, cover and traps are what change. Ducks win by surviving the course.",
+        "rule": "Map 1 follows this exactly: one ring, one lap, guard fixed in the tower, "
+                "always in view.",
+    }, "Ryan 2026-09-10",
+     "the hunter never fucking moved. the ducks went back and forth up an obstacle course. "
+     "thats it.", "ryan", 1),
 
     ("panopticon.ship.definition", {
         "definition": "Purchasable on Steam as a real game by 2027-04-01. Not a demo, not a "
@@ -163,13 +158,14 @@ FACTS = [
      "im not sure about gaurd vision, thats a game design question that cant be asnwered "
      "without further work.", "ryan", 1),
 
-    ("panopticon.open.fable", {
-        "question": "What is 'Fable 5.1' in this project and what should it do?",
-        "status": "OPEN — Ryan named it as a tool to leverage; the pod has no definition for it.",
-        "known": "A model alias named 'fable' is reachable as a subagent model from the Senate "
-                 "head. Whether that is what Ryan means is UNVERIFIED.",
-        "resolution_rule": "Ask Ryan. Do not infer a role for a tool nobody has defined.",
-    }, "Ryan brief 2026-09-09", "", "derived_from_ryan_brief", 0),
+    ("panopticon.tooling.fable", {
+        "what": "Fable 5.1 is the Claude model the Domain Head runs on (claude-fable-5-1). "
+                "It is the head itself, not a separate tool.",
+        "rule": "Expensive. Use only where it earns its cost: judgement, design, reading "
+                "Ryan. Subagents doing mechanical work run on a cheaper model.",
+    }, "Ryan 2026-09-10",
+     "you are now fable 5.1 only use fable where we get actual benefit ... we need to be "
+     "sparing", "ryan", 1),
 
     ("panopticon.dev_machine", {
         "pc": "Windows PC at home, always on, nothing installed as of 2026-09-09. This is where "
