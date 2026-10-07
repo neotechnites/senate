@@ -20,7 +20,7 @@ in any medium or platform (for example Steam and other stores, YouTube, TikTok, 
 
 **4. Players and creators.** Players, streamers and content creators may record, stream and monetise gameplay videos and livestreams that contain the Track as it plays in the game. Licensor will not claim or take down such content.
 
-**5. Fee.** Licensee pays Licensor a one-time fee of USD 150.00 via [PayPal / Wise] on signing. No royalties or further payments are due for any use under this agreement. Each party is responsible for its own taxes; if asked, Licensor will provide a standard tax form (for example IRS Form W-8BEN).
+**5. Fee.** Licensee pays Licensor a one-time fee of USD 150.00 on signing. No royalties or further payments are due for any use under this agreement. Each party is responsible for its own taxes; if asked, Licensor will provide a standard tax form (for example IRS Form W-8BEN).
 
 **6. Ownership and warranties.** Licensor confirms that they wrote, recorded and own 100% of the composition and the sound recording; that the Track contains no samples or third-party material; that they have no label, publisher, distributor or collecting-society arrangement (for example KODA) that prevents this licence or requires further payment for these uses; and that nothing else prevents them from granting it. Licensor keeps full ownership of the Track and may license it to others.
 
