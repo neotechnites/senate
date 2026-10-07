@@ -16,7 +16,7 @@ c) short videos, clips, advertisements and other promotional material for the ga
 
 in any medium or platform (for example Steam and other stores, YouTube, TikTok, X, Instagram, Discord, websites, festivals, showcases and paid advertising). Licensee may let its publishers, distributors, platforms and marketing partners exercise these rights on its behalf, for PANOPTICON only.
 
-**3. Edits.** Licensee may edit the Track to fit (cut, trim, loop, fade, change length, mix under dialogue and sound effects, sync to picture), and Licensor consents to these edits. Licensee will not remix or rearrange the Track, and will not release it as standalone audio (for example a soundtrack album or on music streaming services) without separate written permission.
+**3. Edits.** Licensee may edit the Track to fit (cut, trim, loop, fade, change length, mix under dialogue and sound effects, sync to picture), and Licensor consents to these edits. Licensor will provide the Track's stems (its separate parts, such as drums, bass, melody and effects), and Licensee may use them to mute, rebalance, extend or re-sequence parts of the Track to fit the game and its videos. Licensee will not otherwise remix the Track or add new musical material to it, and will not release it as standalone audio (for example a soundtrack album or on music streaming services) without separate written permission.
 
 **4. Players and creators.** Players, streamers and content creators may record, stream and monetise gameplay videos and livestreams that contain the Track as it plays in the game. Licensor will not claim or take down such content.
 
