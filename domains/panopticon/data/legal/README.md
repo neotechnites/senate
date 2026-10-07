@@ -4,7 +4,7 @@ Mirrored on the PC at C:\Users\ddd\Documents\Panopticon\Legal\ (same layout).
 
 ## entity/koinon_games_llc/
 Utah domestic LLC, filed and effective 2026-10-07. Entity 14746353-0160, filing 2610071245384B.
-Sole member and registered agent: Ryan Whitehead. EIN: pending.
+Sole member and registered agent: Ryan Whitehead. EIN: 43-2281155 (2026-10-07; TIN matching after ~2026-10-21).
 - 2026-10-07_certificate_of_organization_stamped.pdf: the filed certificate (banks ask for this)
 - 2026-10-07_online_business_acknowledgement.pdf
 - 2026-10-07_filing_receipt.pdf: $59
