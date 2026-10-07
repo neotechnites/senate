@@ -8,6 +8,7 @@ Sole member and registered agent: Ryan Whitehead. EIN: 43-2281155 (2026-10-07; T
 - 2026-10-07_certificate_of_organization_stamped.pdf: the filed certificate (banks ask for this)
 - 2026-10-07_online_business_acknowledgement.pdf
 - 2026-10-07_filing_receipt.pdf: $59
+- 2026-10-07_ein_confirmation_letter_CP575.pdf: IRS EIN letter, EIN 43-2281155 (not mailed; this is the only copy)
 
 ## music/mejer/pineberry_rush/
 "Pineberry Rush" by Mejer (Lucas Mejer Mortensen, mejermusic@gmail.com). Non-exclusive, worldwide, perpetual;
