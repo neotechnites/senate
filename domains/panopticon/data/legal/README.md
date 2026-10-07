@@ -21,3 +21,4 @@ transferable to Koinon Games LLC by email (section 8): not yet sent.
 ## steam/
 Steamworks partner: Koinon Games LLC, Steam account neotechnites. SDA signed 2026-10-07 by Ryan Lee Whitehead, Member.
 - 2026-10-07_steam_direct_fee_receipt_100usd.pdf: Steam Direct fee, confirmation 209011600936727770 (30-day clock starts 2026-10-07; recoupable after $1,000 AGR)
+- 2026-10-07_w9_SENSITIVE_contains_SSN.pdf: W-9 from the Steam tax interview (single-member LLC, owner SSN). Local only, git-ignored.

@@ -34,3 +34,6 @@ venv/
 domains/kalshi/data/research/*_cache/
 domains/kalshi/data/research/*_cache_*/
 domains/kalshi/data/research/autoseat_cache/
+
+# Legal docs containing an SSN or bank numbers: never committed
+domains/panopticon/data/legal/**/*SENSITIVE*
