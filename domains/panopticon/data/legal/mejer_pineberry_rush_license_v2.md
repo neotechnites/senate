@@ -2,7 +2,7 @@
 
 This agreement is made on October 7, 2026 between:
 
-**Licensor:** [Mejer's legal name], known professionally as "Mejer", Denmark, [email]
+**Licensor:** Lucas Mejer Mortensen, known professionally as "Mejer", Denmark, [email]
 
 **Licensee:** Ryan Whitehead, developer of the video game PANOPTICON, publishing as "neotechnites", whitehead.ryanlee@gmail.com
 
@@ -32,6 +32,6 @@ in any medium or platform (for example Steam and other stores, YouTube, TikTok, 
 
 &nbsp;
 
-**Licensor:** ______________________________ &nbsp; Name: [Mejer's legal name] &nbsp; Date: __________
+**Licensor:** ______________________________ &nbsp; Name: Lucas Mejer Mortensen &nbsp; Date: __________
 
 **Licensee:** ______________________________ &nbsp; Name: Ryan Whitehead &nbsp; Date: October 7, 2026
