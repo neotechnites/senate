@@ -1,10 +1,10 @@
 # MUSIC LICENCE AGREEMENT: "PINEBERRY RUSH"
 
-This agreement is made on [DATE] between:
+This agreement is made on October 7, 2026 between:
 
 **Licensor:** [Mejer's legal name], known professionally as "Mejer", Denmark, [email]
 
-**Licensee:** [Licensee legal name], developer of the video game PANOPTICON, publishing as "neotechnites", [email]
+**Licensee:** Ryan Whitehead, developer of the video game PANOPTICON, publishing as "neotechnites", ryan@neotechnites.com
 
 **1. Track.** "Pineberry Rush" by Mejer: both the musical composition and the sound recording (master) (the "Track").
 
@@ -40,4 +40,4 @@ in any medium or platform (for example Steam and other stores, YouTube, TikTok, 
 
 **Licensor:** ______________________________ &nbsp; Name: [Mejer's legal name] &nbsp; Date: __________
 
-**Licensee:** ______________________________ &nbsp; Name: [Licensee legal name] &nbsp; Date: __________
+**Licensee:** ______________________________ &nbsp; Name: Ryan Whitehead &nbsp; Date: October 7, 2026
