@@ -17,3 +17,7 @@ transferable to Koinon Games LLC by email (section 8): not yet sent.
 - 2026-10-07_license_SIGNED.pdf: signed by both parties
 - 2026-10-07_paypal_receipt_165usd.pdf: txn 37V61469T5502092D
 - drafts/: unsigned drafts, for reference only
+
+## steam/
+Steamworks partner: Koinon Games LLC, Steam account neotechnites. SDA signed 2026-10-07 by Ryan Lee Whitehead, Member.
+- 2026-10-07_steam_direct_fee_receipt_100usd.pdf: Steam Direct fee, confirmation 209011600936727770 (30-day clock starts 2026-10-07; recoupable after $1,000 AGR)
