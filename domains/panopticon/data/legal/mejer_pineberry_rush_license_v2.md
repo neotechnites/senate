@@ -4,7 +4,7 @@ This agreement is made on October 7, 2026 between:
 
 **Licensor:** [Mejer's legal name], known professionally as "Mejer", Denmark, [email]
 
-**Licensee:** Ryan Whitehead, developer of the video game PANOPTICON, publishing as "neotechnites", neotechnites@koinon.dev
+**Licensee:** Ryan Whitehead, developer of the video game PANOPTICON, publishing as "neotechnites", whitehead.ryanlee@gmail.com
 
 **1. Track.** "Pineberry Rush" by Mejer: both the musical composition and the sound recording (master) (the "Track").
 
