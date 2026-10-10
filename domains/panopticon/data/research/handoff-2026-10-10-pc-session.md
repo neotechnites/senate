@@ -1,8 +1,8 @@
 # Handoff: PC session 2026-10-09 evening -> 2026-10-10 ~02:00 (Ryan returning to the Mac)
 
-READ THIS FIRST ON THE MAC. The PC was authoritative for this session (Mac away). Everything below is committed in this pod repo
-(pull it) and in C:\dev\panopticon main (the PC has NO GitHub access: no remote, wrong SSH key. The Mac must pull main from the
-PC via pc_sync / ssh and push it to GitHub. PC main = a323297f).
+READ THIS FIRST ON THE MAC. The PC was authoritative for this session (Mac away). UPDATE 02:20: the PC now has GitHub access
+(new key ~/.ssh/olympus_ed25519 on the PC, alias github-olympus; both repos point at GitHub over SSH). Pod pushed (f805da6+),
+game main pushed = 4d7a990f (PC merges + the Mac's beach-docs commit). The Mac just pulls both from GitHub as normal.
 
 ## 1. Devlog 0 script (task 290) -- WHERE WE ARE
 Files: data/research/devlog0-script-notes-2026-10-09.md (Ryan's draft, verbatim, in order), devlog0-transcripts-2026-10.md
