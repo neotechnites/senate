@@ -47,3 +47,7 @@ Now, that sounds like exactly the kind of game I'm about to complain about. A li
 
 ## Agreed order (2026-10-09 late)
 hook (plants "deep") -> intro -> origin -> premise + card -> hinge ("sounds like friendslop") -> thesis -> cost beat (the advice is right) -> personal coda (under my belt, play it with friends, Duck Hunt deserved more) -> what I'm going to make (unlocks, mechanical depth, maps differ, seats, bots, look) -> the log (what exists, failures inline, ends on best before/after) -> open questions + next -> ask.
+
+## Playtime research (2026-10-09; PlayTracker for new titles, cached SteamSpy for old; SteamSpy playtime now paywalled)
+avg/median h: Oh Deer 1.9/1.4; Content Warning 5.2/3.1; PEAK 14.2/7.5; R.E.P.O. 20.4/9.9; Lethal Company 25.4/12.0 | Crawl 4.6/1.9; Cuphead 12.6/5.9 (HLTB 10/22); Portal 2 16.6/8.5 (HLTB 8.5/20.5). Group means 13.4 vs 11.3.
+Read: "3 hours and never again" fits Oh Deer / Content Warning, not Lethal / REPO (which outlast Cuphead and Portal 2). Aim the line at the clones; Lethal and REPO are the proof that depth is what made friendslop last.
