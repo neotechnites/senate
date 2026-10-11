@@ -166,3 +166,9 @@ If you want to see that when it comes out, don't forget to subscribe and turn on
 (gameplay)
 if you want to see what I've been more recently working on, you can also watch the shorts I post here and on my TikTok if you want the most recent information. Thanks for watching, and I hope to see you in the next one!
 (short)
+
+## v3 delta (Ryan, 2026-10-10 ~03:30) -- shot notes changed, text mostly as v2
+HOOK: "took all of that advice to heart" -> shot of the game as grey pills in Godot; "ignore all of it" -> replace what's being worked on with Elden Ring; depth line -> black screen, then a screenshot per word (online, multiplayer, depth, actual depth).
+INTRO reworded: "Online I go by neotechnites. But in real life I work full time as a software engineer, so I only have time to work on this game in my free time" (footage of Godot). NOTE: "never published a game on Steam" dropped.
+ORIGIN per sentence: Reach custom-game menu -> sniper POV / over-the-shoulder machinima -> duck catches and kills the sniper -> few-player duck POV watching the front runner get shot -> prop hunt / Witch It / Among Us -> our game mirroring each Duck Hunt shot.
+Head's shot critique given: game in the first 2 s before the montage (hover preview); hinge = our game as friendslop (lobby, 3.1 h counter, cursor to Uninstall); "depth" = camera dropping into the pit; cost beat = face-plant corpse clip + the hub's empty stalls; coda = empty Godot scene not Halo; the session bugs must be filmed, not "represented".
