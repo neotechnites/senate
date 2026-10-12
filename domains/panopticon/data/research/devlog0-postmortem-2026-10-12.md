@@ -41,3 +41,10 @@ Ryan's verdict at 23:36 Sunday: the rough draft finally looks like what was in h
 5. render_lines (5 min) -> head reads every changed line's contact sheet -> timeline_lines -> publish --mac -> stamp to the Mac head.
 6. Ryan signs off per line (voice and clip separately); notes come back by line id; only changed lines re-render.
 Honest expectation: ~1 h when every shot is a known kind; 2-3 h when new in-engine mechanics must be filmed.
+
+## Ryan's corrections (2026-10-11 23:50) -- these supersede the softer wording above
+- Clip gathering started Friday night (Mac head). The assembly consumed Saturday and Sunday. Do not downplay it.
+- Movie Maker for drafts was a VIOLATION of pinned decision 195 (real-time filming for rough cuts); it is why every take cost minutes. In-engine drafts are captured in REAL TIME from the running game, full stop.
+- Building the pipeline by failure was the wrong method: shipped devlog/video pipelines are documented; research first (20 min) before building anything.
+- ~50 shots, none right first time: the fix is FRAME-FIRST -- one still from the exact camera/build checked word-for-word against the shot text before filming; borderline frames shown to Ryan for yes/no.
+- Agent management was unacceptable: foreground only, one job per agent, no idle waits, no second instances, no runaway searches. Hard rule.
