@@ -1,0 +1,61 @@
+﻿Steam Announcement Kit - Press outreach template
+
+
+Press Outreach 
+Alongside with a general broadcast of your game’s announcement press release, you also want to contact individual press & media outlets to increase your chance of coverage.
+These emails shouldn’t be copy-pastes of your press release, but should instead read as a more human version, similar to the format you would later on send to content creators as well.
+
+
+I’ve compiled my own list of press & media outlets, which can be found here:
+Press & Media Contacts
+
+
+This is an international selection of media outlets, and it’s generally advised to localize your emails for the language of the publication. Write your outreach once in English, and then use a tool to translate it to other languages. This is standard practice for press, so even if it doesn’t sound 100% natural, you will be fine.  
+
+
+Important to note on the topic of localization, only reach out to an outlet if you are planning on supporting that game’s language. Sending an English-only game to a Korean outlet won’t give them much of a reason to cover your game. 
+________________
+
+
+Press Outreach Template
+Replace the elements in [BRACKETS] with your own game/studio information.
+The only exception is the subject’s [Announcement], keep this in brackets so the marketing beat is clear.
+________________
+
+
+
+
+Subject: [Announcement] [GAME NAME] - [GENRE / WHAT’S SPECIAL]
+—
+Hi [OUTLET/CONTACT NAME],
+I'm [YOUR NAME], from the indie game studio [STUDIO NAME](Link to Steam developer  homepage/website). I'm reaching out because we've just announced our latest game, [GAME NAME](Link to Steam page).
+[GAME NAME] is a [GENRE], inspired by games like [COMPARISON], where [WHAT THE PLAYER DOES: the actual loop in plain verbs].
+[HOW YOU EXTEND THE GENRE, 2 sentences].
+[IF APPLICABLE] We’ve previously released [PREVIOUS GAME] [WHEN], which [RESULT WITH A NUMBER: review score, wishlists, players, views].
+[GAME NAME] comes out in [WINDOW] on Steam, and is available for wishlist now. You can also find the announcement [trailer here](embed url), as well as more information and assets on our [press kit](embed url).
+Kind regards,
+[YOUR NAME]
+[ROLE] @ [STUDIO NAME] | [PHONE] | [EMAIL]
+
+
+________________
+
+
+Press Outreach Example
+The email template applied to our game Silicon Architect. Mostly based on what I actually sent (Picked up by 4gamer, indiegame biz)
+________________
+
+
+
+
+Subject: [Announcement] Silicon Architect - Incremental CPU designer game with Windows XP artstyle
+—
+Hi Emma,
+I'm Marnix, from the indie game studio BiteMe Games. I'm reaching out because we've just announced our latest game, Silicon Architect.
+Silicon Architect is an incremental simulation game, inspired by games like Execute and Faceminer. You’re tasked with designing CPUs, beating benchmarks, gathering funding and improving and expanding their components to build the best processor possible. 
+The game is built around a nostalgic Windows XP inspired UI, and allows the player to develop their own processors based on real-world CPU design. A playtest is also live right now on Itch.io.
+The game is the follow up to MMO98, which we released earlier this year and was a massive hit, sitting at over 500 reviews.
+Silicon Architect comes out in Q4 2026 on Steam, and is available for wishlist now. You can also find the announcement trailer here, as well as more information and assets on our press kit.
+Kind regards,
+Marnix Wyns
+Producer & Content Creator @ BiteMe Games | +8190-4632-4970  | marnix.wyns@bitemegames.com

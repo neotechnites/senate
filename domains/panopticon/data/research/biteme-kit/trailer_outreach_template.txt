@@ -1,0 +1,87 @@
+﻿Steam Announcement Kit - Trailer outreach template
+Trailer Outreach
+Whilst you should always upload your game trailer to your studio’s own YouTube channel, there are still a variety of third-party game trailer channels that have a large audience you can use. 
+
+
+Coverage isn’t guaranteed though, and it generally takes 2-5 days before the channels upload your trailer. You can include an embargo and contact a few days in advance, or simply wait until the announcement and send out without an embargo. In either case, don’t expect to hear back from the channels whether you get covered or not though. 
+
+
+Who to reach out to?
+
+
+Email
+	Channel
+	trailers@ign.com
+	https://www.youtube.com/@Ign
+https://www.youtube.com/@GameTrailers/
+	sandyawork212@gmail.com
+	https://www.youtube.com/@IndieHub01
+	gamebitnow@outlook.com
+	https://www.youtube.com/@GAMEBitNOW/
+	clement@thebestindiegames.com
+	https://www.youtube.com/@ClemmyGames
+https://www.youtube.com/@bestindiegamestrailers
+	
+
+
+
+Sample folder structure
+Share the original video export files to trailer aggregators, not just a link to your own YouTube video. This reduces friction and ensures they have the version with the highest possible quality to upload. Upload it all in a publicly accessible folder (e.g. Google Drive / OneDrive) alongside additional assets they can use for creating a thumbnail, and share it with them.   
+
+
+Always make sure your link actually has the right sharing privileges! Test it out in a private browser tab before submission.
+
+
+You can find a sample folder here for Silicon Architect.
+
+
+________________
+
+
+Trailer Outreach Template
+Replace the elements in [BRACKETS] with your own game/studio information.
+The only exception is the subject’s [Announcement trailer], keep this in brackets so they can easily identify the kind of trailer. 
+________________
+
+
+
+
+Subject: [Announcement Trailer] [GAME NAME] - [GENRE / WHAT’S SPECIAL]
+—
+Hello,
+I'm [YOUR NAME] of the studio [STUDIO NAME](link to your Steam developer page), and I would like to share the announcement trailer for our next game, [GAME NAME](link to your Steam page).
+[GAME NAME] is [ONE SENTENCE: genre, plus what the player does, can be based on your Short Description]
+[If no embargo]
+There is no embargo, you are free to upload the trailer at any point from now.
+[If embargo]
+The trailer is under embargo until [DATE] at [TIME] [TIMEZONE]. After that you are free to upload it at any point.
+You can find the high quality trailer file here (link to your shared folder), along with some sample thumbnail assets and other logos. Further information about the game can also be found on our press kit (link to your press kit).
+For the YouTube description, I’ve provided the below one as an example, or feel free to change it as you may desire.
+[SAMPLE DESCRIPTION, can be based on your Steam Short Description, might include information about upcoming Next Fest or release date already]
+If you have any further questions, don't hesitate to let me know!
+Kind regards,
+[YOUR NAME]
+[ROLE] @ [STUDIO NAME]
+Trailer Outreach Example
+The email template applied to our game Silicon Architect. Mostly based on what I actually sent (and got picked up by Indie Games Hub).
+________________
+
+
+
+
+Subject: [Announcement Trailer] Silicon Architect - Incremental simulation game with Windows XP vibes
+—
+Hello,
+I'm Marnix of the studio BiteMe Games, and I would like to share the announcement trailer for our next game, Silicon Architect.
+Silicon Architect is an incremental game where you design your own processors, beat benchmarks and obtain funding to improve your CPU components.
+There is no embargo, you are free to upload the trailer at any point from now.
+You can find the high quality trailer file here, along with some sample thumbnail assets and other logos. Further information about the game can also be found on our press kit.
+For the YouTube description, I’ve provided the below one as an example, or feel free to change it as you may desire.
+Silicon Architect is an incremental hardware engineering game with a Windows XP themed UI. Configure and optimize processor components, build your own CPU, and run automated benchmarks. Harvest telemetry and gather research funding to unlock new hardware, and scale your processing power.
+If you have any further questions, don't hesitate to let me know!
+Kind regards,
+Marnix Wyns
+Producer & Content Creator @ BiteMe Games 
+
+
+DO NOT REDISTRIBUTE

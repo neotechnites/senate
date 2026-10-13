@@ -42,12 +42,9 @@ A fact with no Ryan quote does not steer this pod.
 - **An interval with no `interval_source` is SELF-MARKED** and is reported that way
   everywhere. Store the number and a citation URL, never copyrighted prose.
 
-## Not yet built
+## Where the truth lives
 
-1. **Telegram channel.** Nothing has ever reached Ryan's phone. Until a message lands
-   and his reply is written to `conversation`, this pod has produced nothing.
-2. **Host.** Intended: a second Oracle Always Free instance, this pod's own.
-   The Kalshi VPS is off limits — Ryan ruled it. Pending his check of free-tier
-   headroom in the OCI console.
-3. **The wake loop.** The heartbeat that wakes the head, lets it weigh the backlog,
-   and lets it decide whether Ryan is worth interrupting.
+The **live DB is on the VPS** (`/home/steward/steward/data/steward.db`); Telegram and the
+wake timer run there. Local `data/steward.db` is a read-only mirror: `spinup` and
+`./steward.py status` pull it fresh, and local `add`/`done` are refused. Write with
+`./remote.sh sql "..."`.

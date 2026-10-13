@@ -18,6 +18,7 @@ for p in (str(REPO_ROOT), str(POD_DIR)):
 from domains.steward.state.db import Database          # noqa: E402
 from domains.steward.state.canon import seed           # noqa: E402
 from domains.steward.verify import recurrence          # noqa: E402
+from domains.steward import mirror                     # noqa: E402
 
 
 def _refresh_due(conn, oid: int) -> str:
@@ -161,6 +162,11 @@ def main() -> int:
     d.add_argument("--notes", default="")
 
     args = ap.parse_args()
+    if mirror.is_mirror_mode():
+        if args.cmd in ("add", "done"):
+            print(mirror.REFUSE_WRITE, file=sys.stderr)
+            return 2
+        mirror.pull()
     return {"status": cmd_status, "telemetry": cmd_telemetry,
             "add": cmd_add, "done": cmd_done}[args.cmd](args)
 

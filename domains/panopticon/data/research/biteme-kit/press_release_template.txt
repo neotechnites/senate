@@ -1,0 +1,74 @@
+﻿Steam Announcement Kit - Press Release Template
+
+
+Press Release 
+Whilst we will also be doing directed press outreach, a press release is a low-effort way to broadcast to press outlets that you have announced your game. Outlets that may not have the same reach as the ones in the Press & Media Contacts spreadsheet, but can still have an impact on your game’s social proof and visibility. 
+Press releases get distributed through gamespress.com. You are not required to create an account, this is only needed if you as a developer want to see other developers’ press releases.
+You submit your press release by sending an email to inbox@gamespress.com.
+The email should contain a filled in version of the template below, and no further information.  The embargo statement (even if for immediate release) should always be bold and in red at the top of the email. If you are stating a timed embargo, always include the timezone as well.
+When adding URLs to your press release, always use the full URL, instead of an embed like this. This way your press release can easily be copy-pasted without losing data. 
+Do not attach files such as screenshots, these should always be pulled from your press kit. 
+ 
+________________
+
+
+Press Release Template
+Replace the elements in [BRACKETS] with your own game/studio information.
+________________
+
+
+FOR IMMEDIATE RELEASE
+A [GENRE] with [MOST INTERESTING FEATURE], [GAME NAME] announced for Steam
+[CITY], [COUNTRY] - [DATE] - Independent [NATIONALITY] developer [STUDIO NAME] announced [GAME NAME] today, a [GENRE IN ONE PHRASE]. [PLATFORM AND TIMING e.g. “The Steam page is live now and the game launches in early 2027.”]
+[WHAT THE GAME IS: Can be based on short description, high in verbs and what the player is actually doing]
+[WHY IT'S DIFFERENT: How do you meaningfully stand out from other games in your genre? 2 sentences]
+Announcement Trailer: [FULL TRAILER URL]
+Key Features
+•      [FEATURE]
+•      [FEATURE]
+•      [FEATURE]
+•      [FEATURE]
+•      Localized in [AMOUNT] languages.
+Availability
+[GAME NAME] will launch on [PLATFORM] in [TIME WINDOW]. [PLAYTEST OR DEMO STATUS]. 
+Links
+Steam page: [FULL URL]
+Announcement trailer: [FULL URL]
+Press kit: [FULL URL]
+About [STUDIO NAME]
+[Where you are based, when did you start, what you have released before, what makes you interesting? 2-3 sentences]
+Press Contact
+[NAME], [ROLE]
+[EMAIL]
+Press Release Example
+The press release template applied to our game Desktop Island: Idle Together!
+________________
+
+
+FOR IMMEDIATE RELEASE 
+A desktop idler you can play with friends: “Desktop Island: Idle Together!” announced for Steam
+Antwerp, Belgium - August 7, 2026 - Independent Belgian developer BiteMe Games announced their co-op desktop idler life sim, Desktop Island: Idle Together! today. The Steam page is live now and the game launches in December 2026.
+Desktop Island is a life sim that lives on your desktop. Play it fullscreen and hands-on, or park it at the bottom of your screen, in a floating window, or as notifications only, and let the island tick along while you work. Restore it solo or with up to five friends: choose between 10+ professions to master, from woodcutting and fishing to animal care and farming, upgrade the community hall, unlock new buildings and customise your village.
+Idle games are usually a solo affair, and co-op life sims usually depend on one player hosting the save. Desktop Island does neither. Changes sync to a shared island automatically, so anyone can drop in whenever they want, even if the original host isn't online.
+Announcement Trailer: https://www.youtube.com/watch?v=-Lx8kgpWeWg
+Key Features
+•      Active life sim or idle incremental playstyle
+•      Four display styles: fullscreen, bottom of screen, floating window, notification only
+•      Co-op for up to five players, with no host required
+•      10+ professions to master
+•      Cozy, Animal Crossing-inspired soundtrack
+•      Localised into 16 languages
+Availability
+Desktop Island: Idle Together! will launch on Steam in December 2026. A playtest is running now, and access can be requested from the Steam page.
+Links
+Steam page: https://store.steampowered.com/app/4275000/Desktop_Island_Idle_Together/
+Announcement trailer: https://www.youtube.com/watch?v=-Lx8kgpWeWg
+Press kit: https://impress.games/press-kit/biteme-games/desktop-island-idle-together
+About BiteMe Games
+BiteMe Games is an indie studio based in Japan and Belgium, active since 2023. They have previously released MMO98 and Unicycle Pizza Time, and are widely known for their YouTube channel, where they share their game development experiences with over 55,000 subscribers. They are currently working on Desktop Island: Idle Together! and Silicon Architect.
+Press Contact
+Marnix Wyns, Producer
+marnix.wyns@bitemegames.com
+
+
+DO NOT REDISTRIBUTE

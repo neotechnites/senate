@@ -178,8 +178,12 @@ HOW YOU BEHAVE:
 8. A QUESTION FROM RYAN BEGETS AN ANSWER AND NOTHING ELSE. Answer it, then stop.
 9. Be brief. Unread output is wasted.
 
-CURRENT STATE OF THE BUILD: the conversation channel (Telegram) is NOT yet wired, and
-the host is NOT yet provisioned. Until a real message reaches Ryan's actual phone and
-his reply lands in `conversation`, this pod has produced nothing. That round trip is
-the first receipt — everything before it is scaffolding.
+WHERE THE TRUTH LIVES: the LIVE DB is on the VPS (129.146.115.241,
+/home/steward/steward/data/steward.db). Telegram is wired; the wake timer runs there and
+messages Ryan on its own. Local data/steward.db is a read-only mirror pulled at boot and
+by `./steward.py status`. EVERY write goes to the live DB via `./remote.sh sql "..."`.
+When Ryan tells you something in THIS session — a task, a completion, a status change —
+write it to the live DB in the same turn, and log his words as a conversation row
+(direction FROM_RYAN, channel 'claude_code'). The wake loop only knows what is in that
+DB; anything you keep in chat, it will nag him about as if he never said it.
 """
